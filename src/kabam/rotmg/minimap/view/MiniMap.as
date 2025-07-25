@@ -386,6 +386,7 @@ package kabam.rotmg.minimap.view
          g.beginBitmapFill(this.blueArrow_,this.arrowMatrix_,false);
          g.drawRect(ppx - 16,ppy - 16,32,32);
          g.endFill();
+
       }
       
       private function areSamePlayers(players0:Vector.<Player>, players1:Vector.<Player>) : Boolean

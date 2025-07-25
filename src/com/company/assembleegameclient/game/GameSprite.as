@@ -45,6 +45,7 @@ import org.osflash.signals.Signal;
 import com.company.assembleegameclient.parameters.Parameters;
 
 import kabam.rotmg.ui.view.CustomUi.HB_UI_Initializer;
+import kabam.rotmg.ui.view.CustomUi.HB_UI_Map;
 
 public class GameSprite extends Sprite {
    public const closed:Signal = new Signal();
@@ -73,9 +74,12 @@ public class GameSprite extends Sprite {
    public const playerReady:Signal = new Signal(Player);
    private var hasDispatchedPlayerReady:Boolean = false;
    private var checkerForPlayer:Boolean = false;
+   private var hasInitializedUI:Boolean = false;
+   private var miniMap2:HB_UI_Map;
 
 
    public function GameSprite(gameId:int, createCharacter:Boolean, charId:int, model:PlayerModel, mapJSON:String) {
+
       this.camera_ = new Camera();
       super();
       this.model = model;
@@ -87,6 +91,8 @@ public class GameSprite extends Sprite {
       addChild(this.textBox_);
       this.potionSignal = new UpdatePotionInventorySignal();
       this.Initialize_HB_UI_Initializer = new HB_UI_Initializer(this.potionSignal);
+      miniMap2 = new HB_UI_Map(this);
+
 
    }
 
@@ -105,23 +111,16 @@ public class GameSprite extends Sprite {
          this.hudView.x = 600;
          if (!Parameters.uitoggle)
             addChild(this.hudView);
+            addChild(miniMap2);
       }
    }
 
    public function HB_UI_Start():void {
       addChild(Initialize_HB_UI_Initializer);
+      waitForPlayerReady()
 
-      // Player might already be ready if this is called late
-      if (map && map.player_ && map.player_.equipment_ && map.player_.equipment_.length > 3) {
-         Initialize_HB_UI_Initializer.onPlayerReady(map.player_);
-         Initialize_HB_UI_Initializer.HB_UI_Initialize(map.player_);
-      } else {
-         playerReady.addOnce(function(player:Player):void {
-            Initialize_HB_UI_Initializer.onPlayerReady(player);
-            Initialize_HB_UI_Initializer.HB_UI_Initialize(player);
-         });
-      }
    }
+
 
    public function HB_UI_Stop():void {
       removeChild(Initialize_HB_UI_Initializer);
@@ -270,5 +269,22 @@ public class GameSprite extends Sprite {
 
 
    }
+   private function waitForPlayerReady():void {
+      if (!hasInitializedUI) {
+         addEventListener(Event.ENTER_FRAME, onCheckPlayerReady);
+      }
+   }
+
+   private function onCheckPlayerReady(e:Event):void {
+      var player:Player = map.player_;
+      if (player && player.equipment_ && player.equipment_.length > 3) {
+         removeEventListener(Event.ENTER_FRAME, onCheckPlayerReady);
+         Initialize_HB_UI_Initializer.onPlayerReady(player);
+         Initialize_HB_UI_Initializer.HB_UI_Initialize(player);
+
+      }
+   }
+
+
 }
 }

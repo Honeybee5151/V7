@@ -58,8 +58,11 @@ public class HB_UI_Equipment extends EquippedGrid {
         // or
         // scrollRect = new Rectangle(0, 0, slots.length * (TILE + GAP), TILE);
     }
-private function HB_UI_Equipment_UpdateDim(e:TimerEvent):void{
-    this.slots[1].updateDim(this.owner as Player);
+private function HB_UI_Equipment_UpdateDim(e:TimerEvent):void {
+    if (this.owner && this.owner.equipment_) {
+        // Refresh all equipment tiles from current player data
+        this.setItems(this.owner.equipment_, this.owner.slotTypes_, 0);
+    }
 }
     public function cleanup():void {
         if (updateTimer) {

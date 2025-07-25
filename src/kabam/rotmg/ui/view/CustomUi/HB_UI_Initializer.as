@@ -1,8 +1,13 @@
 package kabam.rotmg.ui.view.CustomUi {
+import com.company.assembleegameclient.game.GameSprite;
+
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.geom.Point;
+
+import kabam.rotmg.minimap.view.MiniMap;
 
 import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
 
@@ -30,6 +35,10 @@ public class HB_UI_Initializer extends Sprite {
     private var backpack:HB_UI_BP;
     private var stats:HB_UI_Stats;
 
+    private var miniMap:MiniMap;
+    private const MAP_POSITION:Point = new Point(650, 0);
+    private var gs_:GameSprite;
+    private var mapChecker:int = 1;
     public var onToggleInventory:Signal = new Signal();
     public var onToggleStats:Signal = new Signal();
     public var onToggleBackpack:Signal = new Signal();
@@ -60,7 +69,6 @@ public class HB_UI_Initializer extends Sprite {
         if (!initializeHB_UI_MPHP) {
             initializeHB_UI_MPHP = new HB_UI_MPHP();
         }
-
         addChild(initializeHB_UI_MPHP);
         initializeHB_UI_MPHP.startUpdating(trackedPlayer);
     }
@@ -97,12 +105,19 @@ public class HB_UI_Initializer extends Sprite {
 
 
         }
-        if (inventory && inventory.visible )
-                inventory.visible = false;
+        if (inventory && inventory.visible ) {
+            inventory.visible = false;
+        }
+
+
     }
 
     public function onPlayerReady(player:Player):void {
-        this.trackedPlayer = player;
+        if (player && player.map_ && player.map_.gs_) {
+            this.gs_ = player.map_.gs_;
+        }
+
+                this.trackedPlayer = player;
 
         equipmentBG = new HB_UI_Equipment_BG();
         equipmentBG.drawPerfectSquares();
@@ -126,6 +141,9 @@ public class HB_UI_Initializer extends Sprite {
         stats.startStatsTimer(trackedPlayer);
 
         addControlButtons();
+
+
+
 
 
 
@@ -206,7 +224,13 @@ public class HB_UI_Initializer extends Sprite {
         removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 
         // ✅ Safe to use `stage` now
-        
+
     }
-}
+
+    }
+
+
+
+
+
 }

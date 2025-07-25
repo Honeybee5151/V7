@@ -35,7 +35,7 @@ package kabam.rotmg.minimap
          this.injector.map(SetMiniMapMapSignal).asSingleton();
          this.injector.map(UpdateGameObjectTileSignal).asSingleton();
          this.injector.map(UpdateGroundTileSignal).asSingleton();
-         this.mediatorMap.map(MiniMap).toMediator(MiniMapMediator);
+        // this.mediatorMap.map(MiniMap).toMediator(MiniMapMediator);
       }
    }
 }

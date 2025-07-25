@@ -1,4 +1,4 @@
-package kabam.rotmg.minimap.view
+/*package kabam.rotmg.minimap.view
 {
    import com.company.assembleegameclient.objects.GameObject;
    import com.company.assembleegameclient.objects.Player;
@@ -46,10 +46,16 @@ package kabam.rotmg.minimap.view
       {
          super();
       }
-      
+
       public function initialize() : void
       {
-         this.view.setMap(this.model.gameSprite.map);
+         if (this.model && this.model.gameSprite && this.model.gameSprite.map) {
+            this.view.setMap(this.model.gameSprite.map);
+         } else {
+            trace("[MiniMapMediator] ERROR: gameSprite or map is null");
+            return;
+         }
+
          this.setFocus.add(this.onSetFocus);
          this.updateHUD.add(this.onUpdateHUD);
          this.updateGameObjectTileSignal.add(this.onUpdateGameObjectTile);
@@ -57,12 +63,11 @@ package kabam.rotmg.minimap.view
          this.miniMapZoomSignal.add(this.onMiniMapZoom);
          this.exitGameSignal.add(this.onExitGame);
       }
-      
       private function onExitGame() : void
       {
          this.view.deactivate();
       }
-      
+
       public function destroy() : void
       {
          this.setFocus.remove(this.onSetFocus);
