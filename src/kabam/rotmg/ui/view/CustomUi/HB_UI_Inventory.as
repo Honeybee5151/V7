@@ -17,11 +17,11 @@ public class HB_UI_Inventory extends InventoryGrid {
 
     public function editHB_UI_Inventory():void {
         for (var i:int = 0; i < this.numChildren; i++) {
-            var tile:HB_UI_InventoryTile  = this.getChildAt(i) as HB_UI_InventoryTile ;
+            var tile:InventoryTile  = this.getChildAt(i) as InventoryTile ;
             if (tile != null) {
                 tile.scaleX = tile.scaleY = 1.0;
-                tile.x = (i % 2) * 30;
-                tile.y = int(i / 2) * 30;
+                tile.x = (i % 2) * 40;
+                tile.y = int(i / 2) * 40;
             }
         }
     }

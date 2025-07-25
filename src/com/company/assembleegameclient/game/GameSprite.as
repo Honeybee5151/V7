@@ -37,6 +37,7 @@ import kabam.rotmg.messaging.impl.GameServerConnection;
 import kabam.rotmg.messaging.impl.incoming.MapInfo;
 import kabam.rotmg.stage3D.Renderer;
 import kabam.rotmg.ui.UIUtils;
+import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
 import kabam.rotmg.ui.view.HUDView;
 
 import org.osflash.signals.Signal;
@@ -67,7 +68,8 @@ public class GameSprite extends Sprite {
    private var focus:GameObject;
    private var isGameStarted:Boolean;
    private var displaysPosY:uint = 4;
-   public var Initialize_HB_UI_Initializer:HB_UI_Initializer = new HB_UI_Initializer();
+   private var potionSignal:UpdatePotionInventorySignal;
+   public var Initialize_HB_UI_Initializer:HB_UI_Initializer;
    public const playerReady:Signal = new Signal(Player);
    private var hasDispatchedPlayerReady:Boolean = false;
    private var checkerForPlayer:Boolean = false;
@@ -83,6 +85,9 @@ public class GameSprite extends Sprite {
       this.mui_ = new MapUserInput(this);
       this.textBox_ = new TextBox(this, 600, 600);
       addChild(this.textBox_);
+      this.potionSignal = new UpdatePotionInventorySignal();
+      this.Initialize_HB_UI_Initializer = new HB_UI_Initializer(this.potionSignal);
+
    }
 
    public function setFocus(focus:GameObject):void {
