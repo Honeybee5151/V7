@@ -8,13 +8,14 @@ import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
 
 import org.osflash.signals.Signal;
 
-kabam.rotmg.ui.view.CustomUi.HB_UI_Equipment_BG;
+import kabam.rotmg.ui.view.CustomUi.HB_UI_Equipment_BG;
 import com.company.assembleegameclient.objects.Player;
+import flash.display.Bitmap;
+import kabam.rotmg.assets.Frameworks.EmbeddedAssets_framework;
 
 
 
-
-public class HB_UI_Initializer extends Sprite{
+public class HB_UI_Initializer extends Sprite {
     private var trackedPlayer:Player;
     private var updatePotionInventory:UpdatePotionInventorySignal;
     private var initializeHB_UI_MPHP:HB_UI_MPHP = new HB_UI_MPHP();
@@ -26,6 +27,8 @@ public class HB_UI_Initializer extends Sprite{
     private var positions:Array = [370, 385, 400, 415];
     private var buttonSize:int = 15;
     private var colors:Array = [0xcccccc, 0xcccccc, 0xcccccc, 0xcccccc];
+    private var backpack:HB_UI_BP;
+    private var stats:HB_UI_Stats;
 
     public var onToggleInventory:Signal = new Signal();
     public var onToggleStats:Signal = new Signal();
@@ -35,11 +38,19 @@ public class HB_UI_Initializer extends Sprite{
 
     public function HB_UI_Initializer(updatePotionInventory:UpdatePotionInventorySignal) {
         this.updatePotionInventory = updatePotionInventory;
-
-
+        var framework1:Bitmap = new EmbeddedAssets_framework.UI_Framework_ICON() as Bitmap;
+        framework1.x = 200;
+        framework1.y = 530;
+        framework1.scaleX = framework1.scaleY = 2.5;
+        addChild(framework1);
+        onToggleInventory.add(toggleInventoryVisibility);
+        onToggleStats.add(togglestatsVisibility);
+        if (stage) {
+            onAddedToStage(null);
+        } else {
+            addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+        }
     }
-
-
 
 
 
@@ -53,10 +64,6 @@ public class HB_UI_Initializer extends Sprite{
         addChild(initializeHB_UI_MPHP);
         initializeHB_UI_MPHP.startUpdating(trackedPlayer);
     }
-
-
-
-
 
 
     public function HB_UI_cleanup():void {
@@ -76,9 +83,24 @@ public class HB_UI_Initializer extends Sprite{
             if (contains(equipmentBG)) removeChild(equipmentBG);
             equipmentBG = null;
         }
+        if (stats) {
+            trackedPlayer = null;
+            stats.stopStatsTimer();
+        }
 
-        trackedPlayer = null;
+        if (backpack && backpack.visible) {
+            backpack.visible = false;
+        }
+
+        if (stats && stats.visible) {
+            stats.visible = false;
+
+
+        }
+        if (inventory && inventory.visible )
+                inventory.visible = false;
     }
+
     public function onPlayerReady(player:Player):void {
         this.trackedPlayer = player;
 
@@ -92,12 +114,23 @@ public class HB_UI_Initializer extends Sprite{
         inventory = new HB_UI_Inventory(trackedPlayer);
         addChild(inventory);
 
-
+        backpack = new HB_UI_BP(trackedPlayer);
+        if (player.hasBackpack_) {
+            addChild(backpack);
+        }
         potions = new HB_UI_Potions(updatePotionInventory);
         addChild(potions);
 
+        stats = new HB_UI_Stats();
+        addChild(stats);
+        stats.startStatsTimer(trackedPlayer);
+
         addControlButtons();
+
+
+
     }
+
     public function addControlButtons():void {
         for (var i:int = 0; i < 4; i++) {
             var btn:Sprite = createButton(positions[i], 555, buttonSize, buttonSize, colors[i]);
@@ -143,6 +176,37 @@ public class HB_UI_Initializer extends Sprite{
         }
     }
 
+    private function toggleInventoryVisibility():void {
+        if (inventory) {
+            inventory.visible = !inventory.visible;
+        }
+        if (backpack) {
+            backpack.visible = !backpack.visible;
+        }
+        if (stage) {
+            stage.focus = null;
+        }
+    }
 
+    private function togglestatsVisibility():void {
+        if (stats) {
+            stats.visible = !stats.visible;
+
+            if (!stats.visible) {
+                stats.stopStatsTimer();
+            } else {
+                stats.startStatsTimer(trackedPlayer); // Restart when visible again
+            }
+        }
+        if (stage) {
+        stage.focus = null;
+            }
+    }
+    private function onAddedToStage(e:Event):void {
+        removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+
+        // ✅ Safe to use `stage` now
+        
+    }
 }
 }

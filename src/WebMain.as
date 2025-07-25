@@ -49,7 +49,8 @@ import robotlegs.bender.bundles.mvcs.MVCSBundle;
    public class WebMain extends Sprite
    {
       public static var STAGE:Stage;
-
+      public static var sWidth:Number = 800
+      public static var sHeight:Number = 600
       protected var context:IContext;
       
       public function WebMain()
@@ -86,6 +87,8 @@ import robotlegs.bender.bundles.mvcs.MVCSBundle;
          STAGE.addEventListener(MouseEvent.RIGHT_CLICK, onRightClick)
          STAGE.addEventListener(Event.ENTER_FRAME, onEnterFrame);
          UIUtils.toggleQuality(Parameters.data_.quality);
+         sWidth = stage.stageWidth;
+         sHeight = stage.stageHeight;
       }
 
       private static function onRightClick(event:MouseEvent) : void

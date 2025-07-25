@@ -12,8 +12,8 @@ package com.company.assembleegameclient.map
    public class Camera
    {
       public static const lN_:Vector3D = new Vector3D(0,0,1);
-      public static const CENTER_SCREEN_RECT:Rectangle = new Rectangle(-300,-325,600,600);
-      public static const OFFSET_SCREEN_RECT:Rectangle = new Rectangle(-300,-450,600,600);
+      public static var CENTER_SCREEN_RECT:Rectangle = new Rectangle(-300,-325,600,600);
+      public static var OFFSET_SCREEN_RECT:Rectangle = new Rectangle(-300,-450,600,600);
 
       public var x_:Number;
       public var y_:Number;
@@ -63,7 +63,16 @@ package com.company.assembleegameclient.map
       
       public function configureCamera(object:GameObject, isHallucinating:Boolean) : void
       {
-         var screenRect:Rectangle = Boolean(Parameters.data_.centerOnPlayer)?CENTER_SCREEN_RECT:OFFSET_SCREEN_RECT;
+         //if (!Parameters.data_.uitoggle) {
+            var screenRect:Rectangle = Boolean(Parameters.data_.centerOnPlayer) ? CENTER_SCREEN_RECT : OFFSET_SCREEN_RECT;
+        // }
+         //else{
+            // mscale:Number = Parameters.data_.mscale;
+           // var scaleW:Number = WebMain.sWidth / mscale;
+            //var scaleH:Number = WebMain.sHeight / mscale;
+            //CENTER_SCREEN_RECT = new Rectangle((-scaleW) / 2, -scaleH * 13 / 24, scaleW, scaleH);
+            //OFFSET_SCREEN_RECT = new Rectangle((-scaleW) / 2, -scaleH * 3 / 4, scaleW, scaleH);
+        // }
          var cameraAngle:Number = Parameters.data_.cameraAngle;
          this.configure(object.x_,object.y_,12,cameraAngle,screenRect,false);
          this.isHallucinating_ = isHallucinating;

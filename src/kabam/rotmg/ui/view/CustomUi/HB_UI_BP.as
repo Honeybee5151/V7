@@ -4,11 +4,11 @@ import com.company.assembleegameclient.objects.Player;
 import com.company.assembleegameclient.ui.panels.itemgrids.itemtiles.InventoryTile;
 
 
-public class HB_UI_Inventory extends InventoryGrid {
+public class HB_UI_BP extends InventoryGrid {
 
 
-    public function HB_UI_Inventory(player:Player) {
-        super(player, player, 4, false)
+    public function HB_UI_BP(player:Player) {
+        super(player, player, 8, true)
         this.visible = false;
         editHB_UI_Inventory()
 
@@ -23,7 +23,7 @@ public class HB_UI_Inventory extends InventoryGrid {
             if (tile != null) {
                 tile.scaleX = tile.scaleY = 1.0;
                 tile.x = (i % 2) * 40;
-                tile.y = int(i / 2) * 40 + 60;
+                tile.y = int(i / 2) * 40 + 240;
             }
         }
     }
@@ -38,3 +38,4 @@ public class HB_UI_Inventory extends InventoryGrid {
 
 }
 }
+
