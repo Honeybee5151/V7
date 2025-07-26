@@ -1,4 +1,4 @@
-/*package kabam.rotmg.minimap.view
+package kabam.rotmg.minimap.view
 {
    import com.company.assembleegameclient.objects.GameObject;
    import com.company.assembleegameclient.objects.Player;

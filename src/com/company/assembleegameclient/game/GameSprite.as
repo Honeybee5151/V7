@@ -6,6 +6,7 @@ import com.company.assembleegameclient.objects.IInteractiveObject;
 import com.company.assembleegameclient.objects.Player;
 import com.company.assembleegameclient.objects.Projectile;
 import com.company.assembleegameclient.parameters.Parameters;
+import com.company.assembleegameclient.parameters.ScreenParameters;
 import com.company.assembleegameclient.ui.GuildText;
 import com.company.assembleegameclient.ui.RankText;
 import com.company.assembleegameclient.ui.TextBox;
@@ -38,6 +39,7 @@ import kabam.rotmg.messaging.impl.incoming.MapInfo;
 import kabam.rotmg.stage3D.Renderer;
 import kabam.rotmg.ui.UIUtils;
 import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
+import kabam.rotmg.ui.view.CustomUi.HB_UI_Map;
 import kabam.rotmg.ui.view.HUDView;
 
 import org.osflash.signals.Signal;
@@ -45,7 +47,6 @@ import org.osflash.signals.Signal;
 import com.company.assembleegameclient.parameters.Parameters;
 
 import kabam.rotmg.ui.view.CustomUi.HB_UI_Initializer;
-import kabam.rotmg.ui.view.CustomUi.HB_UI_Map;
 
 public class GameSprite extends Sprite {
    public const closed:Signal = new Signal();
@@ -75,7 +76,9 @@ public class GameSprite extends Sprite {
    private var hasDispatchedPlayerReady:Boolean = false;
    private var checkerForPlayer:Boolean = false;
    private var hasInitializedUI:Boolean = false;
-   private var miniMap2:HB_UI_Map;
+   private var miniMap:HB_UI_Map;
+   private const mapReady:Signal = new Signal(Player);
+   private var savedPos:Object;
 
 
    public function GameSprite(gameId:int, createCharacter:Boolean, charId:int, model:PlayerModel, mapJSON:String) {
@@ -91,8 +94,6 @@ public class GameSprite extends Sprite {
       addChild(this.textBox_);
       this.potionSignal = new UpdatePotionInventorySignal();
       this.Initialize_HB_UI_Initializer = new HB_UI_Initializer(this.potionSignal);
-      miniMap2 = new HB_UI_Map(this);
-
 
    }
 
@@ -111,13 +112,24 @@ public class GameSprite extends Sprite {
          this.hudView.x = 600;
          if (!Parameters.uitoggle)
             addChild(this.hudView);
-            addChild(miniMap2);
+
+
       }
    }
 
+
    public function HB_UI_Start():void {
       addChild(Initialize_HB_UI_Initializer);
-      waitForPlayerReady()
+
+      savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
+
+      // Do an immediate scale/position pass (so no first‑resize glitch)
+      ScreenParameters.execute(Initialize_HB_UI_Initializer, savedPos);
+
+      waitForPlayerReady();
+
+
+
 
    }
 
@@ -128,7 +140,13 @@ public class GameSprite extends Sprite {
    }
 
    public function initialize():void {
+
+
+      // ✅ Instantiate and register minimap BEFORE first UPDATE
+
+
       this.map.initialize();
+
       this.creditDisplay_ = new CreditDisplay(this);
       this.creditDisplay_.x = 594;
       this.creditDisplay_.y = 0;
@@ -142,6 +160,8 @@ public class GameSprite extends Sprite {
       if (this.map.name_ == "Nexus") {
          isNexus_ = true;
       }
+
+
    }
 
    private function showSafeAreaDisplays():void {
@@ -210,6 +230,9 @@ public class GameSprite extends Sprite {
          stage.addEventListener(Event.ENTER_FRAME, this.onEnterFrame);
          LoopedProcess.addProcess(new LoopedCallback(100, this.updateNearestInteractive));
          stage.focus = null;
+         stage.addEventListener(Event.RESIZE, onResize);
+
+
 
       }
    }
@@ -229,8 +252,10 @@ public class GameSprite extends Sprite {
          if (Parameters.data_.uitoggle) {
             HB_UI_Stop();
          }
-
+         stage.removeEventListener(Event.RESIZE, onResize);
       }
+
+
    }
 
    private function onEnterFrame(event:Event):void {
@@ -265,10 +290,11 @@ public class GameSprite extends Sprite {
          HB_UI_Start();
          checkerForPlayer = true;
 
-   }
+      }
 
 
    }
+
    private function waitForPlayerReady():void {
       if (!hasInitializedUI) {
          addEventListener(Event.ENTER_FRAME, onCheckPlayerReady);
@@ -283,6 +309,13 @@ public class GameSprite extends Sprite {
          Initialize_HB_UI_Initializer.HB_UI_Initialize(player);
 
       }
+   }
+   private function onResize(e:Event):void {
+
+      ScreenParameters.execute(Initialize_HB_UI_Initializer, savedPos);
+
+
+
    }
 
 

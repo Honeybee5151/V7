@@ -4,9 +4,11 @@ package kabam.rotmg.minimap
    import kabam.rotmg.minimap.control.SetMiniMapMapSignal;
    import kabam.rotmg.minimap.control.UpdateGameObjectTileSignal;
    import kabam.rotmg.minimap.control.UpdateGroundTileSignal;
-   import kabam.rotmg.minimap.view.MiniMap;
+import kabam.rotmg.minimap.view.MiniMap;
    import kabam.rotmg.minimap.view.MiniMapMediator;
-   import org.swiftsuspenders.Injector;
+import kabam.rotmg.ui.view.CustomUi.HB_UI_Map;
+
+import org.swiftsuspenders.Injector;
    import robotlegs.bender.extensions.mediatorMap.api.IMediatorMap;
    import robotlegs.bender.framework.api.IConfig;
    import robotlegs.bender.framework.api.IContext;
@@ -35,7 +37,8 @@ package kabam.rotmg.minimap
          this.injector.map(SetMiniMapMapSignal).asSingleton();
          this.injector.map(UpdateGameObjectTileSignal).asSingleton();
          this.injector.map(UpdateGroundTileSignal).asSingleton();
-        // this.mediatorMap.map(MiniMap).toMediator(MiniMapMediator);
+         this.mediatorMap.map(MiniMap).toMediator(MiniMapMediator);
+
       }
    }
 }

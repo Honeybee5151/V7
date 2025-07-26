@@ -35,7 +35,7 @@ public class HB_UI_Initializer extends Sprite {
     private var backpack:HB_UI_BP;
     private var stats:HB_UI_Stats;
 
-    private var miniMap:MiniMap;
+    private var miniMap:HB_UI_Map;
     private const MAP_POSITION:Point = new Point(650, 0);
     private var gs_:GameSprite;
     private var mapChecker:int = 1;
@@ -65,7 +65,15 @@ public class HB_UI_Initializer extends Sprite {
 
     public function HB_UI_Initialize(player:Player):void {
         this.trackedPlayer = player;
+        var gs_:GameSprite = player.map_.gs_;
+        miniMap = new HB_UI_Map(gs_);
+        addChild(miniMap);
 
+        // ✅ Instantiate and register minimap BEFORE first UPDATE
+        //miniMap = new HB_UI_Map(gs_);
+        //addChild(miniMap);
+
+        // Now safe to start anything else
         if (!initializeHB_UI_MPHP) {
             initializeHB_UI_MPHP = new HB_UI_MPHP();
         }
@@ -109,7 +117,9 @@ public class HB_UI_Initializer extends Sprite {
             inventory.visible = false;
         }
 
-
+        if (miniMap){
+            miniMap.cleanup();
+        }
     }
 
     public function onPlayerReady(player:Player):void {
