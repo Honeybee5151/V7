@@ -34,6 +34,8 @@ public class HB_UI_Initializer extends Sprite {
     private var colors:Array = [0xcccccc, 0xcccccc, 0xcccccc, 0xcccccc];
     private var backpack:HB_UI_BP;
     private var stats:HB_UI_Stats;
+    private var externalInventory:HB_UI_Inventory;
+    private var externalBackpack:HB_UI_BP;
 
 
     private const MAP_POSITION:Point = new Point(650 - 260, 0 - 555);
@@ -129,13 +131,9 @@ public class HB_UI_Initializer extends Sprite {
         equipmentUI = new HB_UI_Equipment(trackedPlayer);
         addChild(equipmentUI);
 
-        inventory = new HB_UI_Inventory(trackedPlayer);
-        addChild(inventory);
 
-        backpack = new HB_UI_BP(trackedPlayer);
-        if (player.hasBackpack_) {
-            addChild(backpack);
-        }
+
+
         potions = new HB_UI_Potions(updatePotionInventory);
         addChild(potions);
 
@@ -144,6 +142,7 @@ public class HB_UI_Initializer extends Sprite {
         stats.startStatsTimer(trackedPlayer);
 
         addControlButtons();
+
 
 
 
@@ -198,12 +197,8 @@ public class HB_UI_Initializer extends Sprite {
     }
 
     private function toggleInventoryVisibility():void {
-        if (inventory) {
-            inventory.visible = !inventory.visible;
-        }
-        if (backpack) {
-            backpack.visible = !backpack.visible;
-        }
+        if (externalInventory) externalInventory.visible = !externalInventory.visible;
+
         if (stage) {
             stage.focus = null;
         }
@@ -230,6 +225,13 @@ public class HB_UI_Initializer extends Sprite {
 
     }
 
+
+
+
+    public function setExternalUIRefs(inv:HB_UI_Inventory, bp:HB_UI_BP):void {
+        this.externalInventory = inv;
+        this.externalBackpack = bp;
+    }
     }
 
 

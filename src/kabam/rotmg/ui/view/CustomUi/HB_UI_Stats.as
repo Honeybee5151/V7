@@ -41,8 +41,8 @@ import flash.events.TimerEvent;
             format.size = 14; // optional
             format.font = "Arial"; // optional
             ShowStatsTextField.defaultTextFormat = format;
-            ShowStatsTextField.x = 350
-            ShowStatsTextField.y = 400
+            ShowStatsTextField.x = 350 - 260
+            ShowStatsTextField.y = 400 - 555
             ShowStatsTextField.height = 100
             ShowStatsTextField.width = 0
             ShowStatsTextField.multiline = true;   // permits multiple rows
@@ -75,15 +75,15 @@ import flash.events.TimerEvent;
             xpBarBase.graphics.beginFill(0x00cc00); // Example color
             xpBarBase.graphics.drawRect(0, 0, 94.85, 8); // Height is 16 in your case
             xpBarBase.graphics.endFill();
-            xpBarBase.x = 350
-            xpBarBase.y = 392
+            xpBarBase.x = 350 - 260
+            xpBarBase.y = 392 - 555
 
             xpBar.graphics.clear();
             xpBar.graphics.beginFill(0x008000); // Example color
             xpBar.graphics.drawRect(0, 0, fillWidth, 8); // Height is 16 in your case
             xpBar.graphics.endFill();
-            xpBar.x = 350
-            xpBar.y = 392
+            xpBar.x = 350 - 260
+            xpBar.y = 392 - 555
             if (player.level_ == 20) {
                 xpBar.graphics.clear();
                 xpBar.graphics.beginFill(0xffa500);
@@ -102,8 +102,8 @@ import flash.events.TimerEvent;
 
 
             currentLVLTextField.defaultTextFormat = format;
-            currentLVLTextField.x = 378
-            currentLVLTextField.y = 370
+            currentLVLTextField.x = 378 - 260
+            currentLVLTextField.y = 370 - 555
 
             currentLVLTextField.multiline = true;   // permits multiple rows
             currentLVLTextField.selectable = false;  // ❶ stops text highlighting / caret

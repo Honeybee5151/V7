@@ -331,6 +331,11 @@ public class Options extends Sprite
          if (this.gs_.hudView == null || !this.gs_.contains(this.gs_.hudView)) {
             this.gs_.hudModelInitialized();
             map.addChild(map.gradientOverlay_);
+            if (this.gs_.contains(this.gs_.miniMap)) {
+               this.gs_.setChildIndex(this.gs_.miniMap, this.gs_.numChildren - 1);
+            }
+
+
 
          }
          this.gs_.HB_UI_Stop();

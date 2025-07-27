@@ -41,6 +41,9 @@ import kabam.rotmg.stage3D.Renderer;
 import kabam.rotmg.ui.UIUtils;
 import kabam.rotmg.ui.model.HUDModel;
 import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
+import kabam.rotmg.ui.view.CustomUi.HB_UI_BP;
+import kabam.rotmg.ui.view.CustomUi.HB_UI_Inventory;
+import kabam.rotmg.ui.view.CustomUi.HB_UI_InventoryBP_Wrapper;
 import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer_Signal;
 
 import kabam.rotmg.ui.view.HUDView;
@@ -54,6 +57,7 @@ import com.company.assembleegameclient.parameters.Parameters;
 import kabam.rotmg.ui.view.CustomUi.HB_UI_Initializer;
 
 import org.swiftsuspenders.Injector;
+
 
 import robotlegs.bender.framework.api.IContext;
 import robotlegs.bender.extensions.mediatorMap.api.IMediatorMap
@@ -90,10 +94,13 @@ public class GameSprite extends Sprite {
    //private var miniMap:HB_UI_Map;
    private const mapReady:Signal = new Signal(Player);
    private var savedPos:Object;
-   private var miniMap:MiniMap_Initializer;
-
-
-
+   public var miniMap:MiniMap_Initializer;
+   private var trackedPlayer:Player;
+   private var inventory:HB_UI_Inventory;
+   private var backpack:HB_UI_BP;
+   private var inventoryWrapper:HB_UI_InventoryBP_Wrapper;
+   private var position_of_map_when_customUI:uint = 608
+   private var position_of_map_when_originalUI:uint = 604
 
    public function GameSprite(gameId:int, createCharacter:Boolean, charId:int, model:PlayerModel, mapJSON:String) {
 
@@ -125,14 +132,16 @@ public class GameSprite extends Sprite {
 
    public function miniMapInitializer():void {
       miniMap = new MiniMap_Initializer();
-      miniMap.x = 4;
-      miniMap.y = 4;
       addChild(miniMap);
       trace("MiniMap has run")
+      if (this.contains(this.miniMap)) {
+         this.setChildIndex(this.miniMap, this.numChildren - 1);
+      }
 
 
 
    }
+
    public function hudModelInitialized():void {
       if (!Parameters.data_.uitoggle) {
          this.hudView = new HUDView();
@@ -147,7 +156,7 @@ public class GameSprite extends Sprite {
 
    public function HB_UI_Start():void {
       addChild(Initialize_HB_UI_Initializer);
-
+      this.trackedPlayer = this.map.player_;
 
 
       // Do an immediate scale/position pass (so no first‑resize glitch)
@@ -157,16 +166,19 @@ public class GameSprite extends Sprite {
       savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer); // now includes scale
 
 
-
-
    }
 
 
    public function HB_UI_Stop():void {
       removeChild(Initialize_HB_UI_Initializer);
       Initialize_HB_UI_Initializer.HB_UI_cleanup();
+      if (inventoryWrapper && contains(inventoryWrapper)) {
+         removeChild(inventoryWrapper);
+         inventoryWrapper = null;
+      }
+      }
 
-   }
+
 
    public function initialize():void {
 
@@ -272,7 +284,9 @@ public class GameSprite extends Sprite {
          // OR simply call your UI initializer directly:
          this.miniMapInitializer();  // if you're not going signal-based
 
-         trace("connect(): MiniMap initialized.");
+         if (Parameters.data_.uitoggle){
+            miniMap.x += position_of_map_when_customUI
+         }
       }
    }
 
@@ -349,7 +363,14 @@ public class GameSprite extends Sprite {
          Initialize_HB_UI_Initializer.onPlayerReady(player);
          Initialize_HB_UI_Initializer.HB_UI_Initialize(player);
          savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
+         inventoryWrapper = new HB_UI_InventoryBP_Wrapper();
+         inventoryWrapper.Initialize(this.map.player_);
+         addChild(inventoryWrapper);
 
+         Initialize_HB_UI_Initializer.setExternalUIRefs(
+                 inventoryWrapper.getInventory(),
+                 inventoryWrapper.getBackpack()
+         );
       }
    }
    private function onResize(e:Event):void {

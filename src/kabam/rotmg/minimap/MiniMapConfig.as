@@ -6,7 +6,7 @@ package kabam.rotmg.minimap
    import kabam.rotmg.minimap.control.UpdateGroundTileSignal;
 import kabam.rotmg.minimap.view.MiniMap;
    import kabam.rotmg.minimap.view.MiniMapMediator;
-import kabam.rotmg.ui.view.CustomUi.HB_UI_Map;
+
 
 import org.swiftsuspenders.Injector;
    import robotlegs.bender.extensions.mediatorMap.api.IMediatorMap;

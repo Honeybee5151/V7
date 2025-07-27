@@ -69,10 +69,12 @@ import robotlegs.bender.bundles.mvcs.Mediator;
 
       [Inject]
       public var miniMapInitSignal:MiniMap_Initializer_Signal;
+
       
       public function GameSpriteMediator()
       {
          super();
+
       }
       
       override public function initialize() : void
@@ -133,6 +135,11 @@ import robotlegs.bender.bundles.mvcs.Mediator;
       {
          this.hudSetupStarted.dispatch(this.view);
          this.miniMapInitSignal.dispatch();
+         if (this.view.miniMap && this.view.contains(this.view.miniMap)) {
+            this.view.setChildIndex(this.view.miniMap, this.view.numChildren - 1);
+         }
+
+
       }
       
       private function onStatusPanelDraw(player:Player) : void

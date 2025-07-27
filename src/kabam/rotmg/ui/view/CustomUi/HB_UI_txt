@@ -1,19 +1,22 @@
 Welcome to my UI. I hope you like it.
-The HB_UI_Initializer is the container for each file in this folder.
+The HB_UI_Initializer is the container for each file in this folder, except the map and wrapper.
+That is because the scaling does not work for components that are spread out too much, aka the map and bp/inventory.
 The Initializer is then initialized in GameSprite.
 
 In Options.as combined with Parameters.as I make the UI toggleable.
 And that is also linked ultimately in Gamesprite.
 
 To scale the UI i created static functions in Screenparameters. Which is executed also in GameSprite.
-You might need to change/add " stage.scaleMode = StageScaleMode.NO_SCALE; in setup in WebMain for hte scaling to work.
-                                   stage.align = StageAlign.TOP_LEFT;"
+You might need to change/add "stage.scaleMode = StageScaleMode.NO_SCALE;  stage.align = StageAlign.TOP_LEFT;"
+in WebMain -> setup, for the scaling to work. Also here is a tutorial on how to do proper mscale for the rest of the game
+https://www.mpgh.net/forum/showthread.php?t=1542152.
+
 
 To make the miniMap work I used the prebuilt one and disconnected it from hudView. Basically I used MiniMap_Mediator.
 So I did it by creating 3 new files, MiniMap_Initializer, the mediator and the signal, and some code added to gamesprite,
 and to gamesprite's mediator, but not 100% sure how much that is needed.
 
-
+To get the inventory and backpack work with the buttons in HB_UI_Initializer I used references and a wrapper.
 
 
 

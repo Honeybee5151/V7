@@ -23,7 +23,7 @@ public class HB_UI_Inventory extends InventoryGrid {
             if (tile != null) {
                 tile.scaleX = tile.scaleY = 1.0;
                 tile.x = (i % 2) * 40;
-                tile.y = int(i / 2) * 40 + 60;
+                tile.y = int(i / 2) * 40 + 60 ;
             }
         }
     }
