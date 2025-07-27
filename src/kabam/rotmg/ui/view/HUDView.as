@@ -21,7 +21,7 @@ public class HUDView extends Sprite
 
    private const BG_POSITION:Point = new Point(0,0);
 
-   private const MAP_POSITION:Point = new Point(4,4);
+   //private const MAP_POSITION:Point = new Point(4,4);
 
    private const CHARACTER_DETAIL_PANEL_POSITION:Point = new Point(0,198);
 
@@ -35,7 +35,7 @@ public class HUDView extends Sprite
 
    private var background:CharacterWindowBackground;
 
-   private var miniMap:MiniMap;
+  // private var miniMap:MiniMap;
 
    private var equippedGrid:EquippedGrid;
 
@@ -60,7 +60,7 @@ public class HUDView extends Sprite
    private function createAssets() : void
    {
       this.background = new CharacterWindowBackground();
-      this.miniMap = new MiniMap(192,192);
+      //this.miniMap = new MiniMap(192,192);
       this.tabStrip = new TabStripView(186,153);
       this.characterDetails = new CharacterDetailsView();
       this.statMeters = new StatMetersView();
@@ -69,7 +69,7 @@ public class HUDView extends Sprite
    private function addAssets() : void
    {
       addChild(this.background);
-      addChild(this.miniMap);
+      //addChild(this.miniMap);
       addChild(this.tabStrip);
       addChild(this.characterDetails);
       addChild(this.statMeters);
@@ -79,8 +79,8 @@ public class HUDView extends Sprite
    {
       this.background.x = this.BG_POSITION.x;
       this.background.y = this.BG_POSITION.y;
-      this.miniMap.x = this.MAP_POSITION.x;
-      this.miniMap.y = this.MAP_POSITION.y;
+     // this.miniMap.x = this.MAP_POSITION.x;
+     // this.miniMap.y = this.MAP_POSITION.y;
       this.tabStrip.x = this.TAB_STRIP_POSITION.x;
       this.tabStrip.y = this.TAB_STRIP_POSITION.y;
       this.characterDetails.x = this.CHARACTER_DETAIL_PANEL_POSITION.x;

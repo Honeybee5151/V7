@@ -3,11 +3,13 @@ package kabam.rotmg.ui.view
    import com.company.assembleegameclient.objects.Player;
    import kabam.rotmg.ui.model.HUDModel;
    import kabam.rotmg.ui.signals.UpdateHUDSignal;
-   import robotlegs.bender.bundles.mvcs.Mediator;
+import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer;
+
+import robotlegs.bender.bundles.mvcs.Mediator;
    
    public class HUDMediator extends Mediator
    {
-       
+
       
       [Inject]
       public var view:HUDView;
@@ -37,6 +39,7 @@ package kabam.rotmg.ui.view
       private function onUpdateHUD(player:Player) : void
       {
          this.view.draw();
+
       }
       
       private function onInitializeHUD(player:Player) : void

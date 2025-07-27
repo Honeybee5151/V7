@@ -21,8 +21,8 @@ public class HB_UI_Equipment_BG extends Sprite{
             perfectSquare.graphics.drawRect(0, 0, 30, 30); // draw at (0, 0)
             perfectSquare.graphics.endFill();
 
-            perfectSquare.x = 340 + (i * 30); // space them out horizontally
-            perfectSquare.y = 570;
+            perfectSquare.x = 340 - 260 + (i * 30); // space them out horizontally
+            perfectSquare.y = 570 - 555;
 
             addChild(perfectSquare);
         }

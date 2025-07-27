@@ -32,16 +32,16 @@ public class HB_UI_MPHP extends Sprite {
         hpText.defaultTextFormat = textFormat;
         hpText.width = 80;
         hpText.height = 30;
-        hpText.x = 260;
-        hpText.y = 570;
+        hpText.x = 260 - 260;
+        hpText.y = 570 - 555;
         hpText.selectable = false;
         addChild(hpText);
 
         mpText.defaultTextFormat = textFormat;
         mpText.width = 80;
         mpText.height = 30;
-        mpText.x = 460;
-        mpText.y = 570;
+        mpText.x = 460 - 260;
+        mpText.y = 570 - 555;
         mpText.selectable = false;
         addChild(mpText);
     }
@@ -50,14 +50,14 @@ private function createHPBAR():void{
     HPBARBG.graphics.beginFill(0xB01030); // Red fill
     HPBARBG.graphics.drawRect(0, 0, 80, 30); // x, y, width, height
     HPBARBG.graphics.endFill();
-    HPBARBG.x = 260
-    HPBARBG.y = 570
+    HPBARBG.x = 260 - 260
+    HPBARBG.y = 570 - 555
 
     HPBAR.graphics.beginFill(0xdc143c); // Red fill
     HPBAR.graphics.drawRect(0, 0, 80, 30); // x, y, width, height
     HPBAR.graphics.endFill();
-    HPBAR.x = 260
-    HPBAR.y = 570
+    HPBAR.x = 260 - 260
+    HPBAR.y = 570 - 555
 
 
 
@@ -68,14 +68,14 @@ private function createHPBAR():void{
         MPBARBG.graphics.beginFill(0x334FAB); // Red fill
         MPBARBG.graphics.drawRect(0, 0, 80, 30); // x, y, width, height
         MPBARBG.graphics.endFill();
-        MPBARBG.x = 460
-        MPBARBG.y = 570
+        MPBARBG.x = 460 - 260
+        MPBARBG.y = 570 - 555
 
         MPBAR.graphics.beginFill(0x4169e1); // Red fill
         MPBAR.graphics.drawRect(0, 0, 80, 30); // x, y, width, height
         MPBAR.graphics.endFill();
-        MPBAR.x = 460
-        MPBAR.y = 570
+        MPBAR.x = 460 - 260
+        MPBAR.y = 570 - 555
 
 
 

@@ -4,38 +4,61 @@ import flash.display.DisplayObject;
 
 
 public class ScreenParameters {
+    private static var defaultWidth:uint = 800;
+    private static var defaultHeight:uint = 600;
+
 
 
     public static function positionRelations(asset:DisplayObject):Object {
-        return {xPercent: asset.x /  WebMain.sWidth, yPercent: asset.y / WebMain.sHeight}
+        return {xPercent: asset.x /  asset.stage.stageWidth , yPercent: asset.y / asset.stage.stageHeight }
 
     }
 
     public static function resizeAsset(asset:DisplayObject):void{
-        asset.scaleX = (WebMain.sWidth / 800)
-        asset.scaleY = (WebMain.sHeight / 600)
-        var scale:Number = Math.min(asset.scaleX, asset.scaleY); // Keeps aspect ratio
+        asset.scaleX = (asset.stage.stageWidth / defaultWidth)
+        asset.scaleY = (asset.stage.stageHeight / defaultHeight)
 
-        asset.scaleX = scale;
-        asset.scaleY = scale;
+        var scale:Number = Math.min(asset.scaleX, asset.scaleY);
+        asset.scaleY = scale
+        asset.scaleX = scale
 
     }
+
 
 
     public static function newPosition(pos:Object, asset:DisplayObject):void {
-        asset.x = WebMain.sWidth * pos.xPercent;
-        asset.y = WebMain.sHeight * pos.yPercent;
+        const w:Number = asset.stage.stageWidth;
+        const h:Number = asset.stage.stageHeight;
+
+        // same scale you used in resizeAsset()
+        const scale:Number = Math.min(w / 800, h / 600);
+
+        const scaledDesignW:Number = 800 * scale;
+        const marginX:Number       = (w - scaledDesignW) * 0.5;   // 0 when window ≤ 4:3
+
+        asset.x = marginX + scaledDesignW * pos.xPercent;
+        asset.y = h * pos.yPercent;   // y was already correct
     }
-    public static function execute(asset:DisplayObject, pos:Object): void{
+    public static function execute(asset:DisplayObject, pos:Object): void {
 
-        if (!asset || !pos) return;
-        resizeAsset(asset);
-        newPosition(pos, asset);
-        trace("screenapramaters execute has executed")
+        if (!asset || !pos) {
+
+
+        }
+        else {
+
+            resizeAsset(asset);
+            newPosition(pos, asset);
+
+        }
+
 
 
 
     }
+
+
+
 }
 
 }

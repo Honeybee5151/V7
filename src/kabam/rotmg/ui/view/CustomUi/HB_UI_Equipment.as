@@ -38,8 +38,8 @@ public class HB_UI_Equipment extends EquippedGrid {
 
 
         // 4) move the whole grid to wherever you want on‑screen
-        this.x = 340;      // whole panel’s position
-        this.y = 570;
+        this.x = 340 - 260;      // whole panel’s position
+        this.y = 570 - 555;
 
     }
 

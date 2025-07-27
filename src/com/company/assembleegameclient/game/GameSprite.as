@@ -36,17 +36,28 @@ import kabam.rotmg.core.model.PlayerModel;
 import kabam.rotmg.game.view.CreditDisplay;
 import kabam.rotmg.messaging.impl.GameServerConnection;
 import kabam.rotmg.messaging.impl.incoming.MapInfo;
+import kabam.rotmg.minimap.view.MiniMapMediator;
 import kabam.rotmg.stage3D.Renderer;
 import kabam.rotmg.ui.UIUtils;
+import kabam.rotmg.ui.model.HUDModel;
 import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
-import kabam.rotmg.ui.view.CustomUi.HB_UI_Map;
+import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer_Signal;
+
 import kabam.rotmg.ui.view.HUDView;
+import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer;
+import kabam.rotmg.minimap.view.MiniMap;
 
 import org.osflash.signals.Signal;
 
 import com.company.assembleegameclient.parameters.Parameters;
 
 import kabam.rotmg.ui.view.CustomUi.HB_UI_Initializer;
+
+import org.swiftsuspenders.Injector;
+
+import robotlegs.bender.framework.api.IContext;
+import robotlegs.bender.extensions.mediatorMap.api.IMediatorMap
+
 
 public class GameSprite extends Sprite {
    public const closed:Signal = new Signal();
@@ -76,9 +87,12 @@ public class GameSprite extends Sprite {
    private var hasDispatchedPlayerReady:Boolean = false;
    private var checkerForPlayer:Boolean = false;
    private var hasInitializedUI:Boolean = false;
-   private var miniMap:HB_UI_Map;
+   //private var miniMap:HB_UI_Map;
    private const mapReady:Signal = new Signal(Player);
    private var savedPos:Object;
+   private var miniMap:MiniMap_Initializer;
+
+
 
 
    public function GameSprite(gameId:int, createCharacter:Boolean, charId:int, model:PlayerModel, mapJSON:String) {
@@ -94,6 +108,8 @@ public class GameSprite extends Sprite {
       addChild(this.textBox_);
       this.potionSignal = new UpdatePotionInventorySignal();
       this.Initialize_HB_UI_Initializer = new HB_UI_Initializer(this.potionSignal);
+      Initialize_HB_UI_Initializer.x += 260;
+      Initialize_HB_UI_Initializer.y += 555;
 
    }
 
@@ -106,6 +122,17 @@ public class GameSprite extends Sprite {
       this.map.setProps(mapInfo.width_, mapInfo.height_, mapInfo.name_, mapInfo.background_, mapInfo.allowPlayerTeleport_, mapInfo.showDisplays_);
    }
 
+
+   public function miniMapInitializer():void {
+      miniMap = new MiniMap_Initializer();
+      miniMap.x = 4;
+      miniMap.y = 4;
+      addChild(miniMap);
+      trace("MiniMap has run")
+
+
+
+   }
    public function hudModelInitialized():void {
       if (!Parameters.data_.uitoggle) {
          this.hudView = new HUDView();
@@ -121,12 +148,13 @@ public class GameSprite extends Sprite {
    public function HB_UI_Start():void {
       addChild(Initialize_HB_UI_Initializer);
 
-      savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
+
 
       // Do an immediate scale/position pass (so no first‑resize glitch)
       ScreenParameters.execute(Initialize_HB_UI_Initializer, savedPos);
 
       waitForPlayerReady();
+      savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer); // now includes scale
 
 
 
@@ -137,12 +165,13 @@ public class GameSprite extends Sprite {
    public function HB_UI_Stop():void {
       removeChild(Initialize_HB_UI_Initializer);
       Initialize_HB_UI_Initializer.HB_UI_cleanup();
+
    }
 
    public function initialize():void {
 
 
-      // ✅ Instantiate and register minimap BEFORE first UPDATE
+
 
 
       this.map.initialize();
@@ -232,8 +261,18 @@ public class GameSprite extends Sprite {
          stage.focus = null;
          stage.addEventListener(Event.RESIZE, onResize);
 
+         var injector:Injector = StaticInjectorContext.getInjector();
+         var hudModel:HUDModel = injector.getInstance(HUDModel);
+         hudModel.gameSprite = this;
 
+         // ✅ If you have a custom signal:
+         var minimapSignal:MiniMap_Initializer_Signal = injector.getInstance(MiniMap_Initializer_Signal);
+         minimapSignal.dispatch(); // <- this will trigger the mediator
 
+         // OR simply call your UI initializer directly:
+         this.miniMapInitializer();  // if you're not going signal-based
+
+         trace("connect(): MiniMap initialized.");
       }
    }
 
@@ -252,6 +291,8 @@ public class GameSprite extends Sprite {
          if (Parameters.data_.uitoggle) {
             HB_UI_Stop();
          }
+        // miniMap.cleanup();
+         //removeChild(miniMap);
          stage.removeEventListener(Event.RESIZE, onResize);
       }
 
@@ -307,12 +348,18 @@ public class GameSprite extends Sprite {
          removeEventListener(Event.ENTER_FRAME, onCheckPlayerReady);
          Initialize_HB_UI_Initializer.onPlayerReady(player);
          Initialize_HB_UI_Initializer.HB_UI_Initialize(player);
+         savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
 
       }
    }
    private function onResize(e:Event):void {
-
-      ScreenParameters.execute(Initialize_HB_UI_Initializer, savedPos);
+      if (contains(Initialize_HB_UI_Initializer) && savedPos){
+         ScreenParameters.execute(Initialize_HB_UI_Initializer, savedPos);
+         trace("savedPos →", JSON.stringify(savedPos));
+      }
+      else{
+         trace("gamesprite's onresize's savedd pos it not avialable");
+      }
 
 
 

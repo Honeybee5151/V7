@@ -23,10 +23,10 @@ public class HB_UI_Potions extends Sprite{
         this.updatePotionInventory = updatePotionInventory;
 
         this.updatePotionInventory.add(this.onPotionChanged);
-
+        drawHPMPBackground()
         drawRightMPRec();
         drawLeftHPRec()
-        drawHPMPBackground()
+
     }
 
 
@@ -35,8 +35,8 @@ public class HB_UI_Potions extends Sprite{
             public function drawLeftHPRec():void {
                 for (var j:uint = 0; j < 6; j++) {
                     var rect2:Shape = new Shape();
-                    rect2.x = 340 + j * 5;
-                    rect2.y = 555;
+                    rect2.x = 340 - 260 + j * 5;
+                    rect2.y = 555 - 555;
                     rect2.graphics.lineStyle(1, 0x000000, 1); // thickness: 2px, color: black, alpha: 1 (fully visible)
                     rect2.graphics.beginFill(0xFF0000);
 
@@ -56,8 +56,8 @@ public class HB_UI_Potions extends Sprite{
             public function drawRightMPRec():void {
                 for (var n:uint = 0; n < 6; n++) {
                     var rect6:Shape = new Shape();
-                    rect6.x = 430 + n * 5;
-                    rect6.y = 555;
+                    rect6.x = 430 - 260 + n * 5;
+                    rect6.y = 555 - 555;
                     rect6.graphics.lineStyle(1, 0x000000, 1); // thickness: 2px, color: black, alpha: 1 (fully visible)
                     rect6.graphics.beginFill(0xFF0000);
                     rect6.graphics.beginFill(0x002bff, 1);
@@ -74,8 +74,8 @@ public class HB_UI_Potions extends Sprite{
                     var rect4:Shape = new Shape();
                     rect4.graphics.lineStyle(1, 0x000000, 1);
                     if (l < 6) {
-                        rect4.x = 340 + l * 5;
-                        rect4.y = 555;
+                        rect4.x = 340 - 260 + l * 5;
+                        rect4.y = 555 - 555;
 
                         rect4.graphics.beginFill(0x808080 , 1);
                         rect4.graphics.drawRect(0, 0, 5, 15);
@@ -83,8 +83,8 @@ public class HB_UI_Potions extends Sprite{
                         addChild(rect4);
                     } else
                     {
-                        rect4.x = 400 + l * 5;
-                        rect4.y = 555;
+                        rect4.x = 400 - 260 + l * 5;
+                        rect4.y = 555 - 555;
 
                         rect4.graphics.beginFill(0x808080, 1);
                         rect4.graphics.drawRect(0, 0, 5, 15);

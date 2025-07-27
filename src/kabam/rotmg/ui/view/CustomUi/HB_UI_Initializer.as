@@ -7,7 +7,7 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
-import kabam.rotmg.minimap.view.MiniMap;
+
 
 import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
 
@@ -29,14 +29,14 @@ public class HB_UI_Initializer extends Sprite {
     private var inventory:HB_UI_Inventory;
     private var potions:HB_UI_Potions;
     private var labels:Array = ["inv", "stats", "bp", "other"];
-    private var positions:Array = [370, 385, 400, 415];
+    private var positions:Array = [370 - 260, 385 - 260, 400 - 260, 415 - 260];
     private var buttonSize:int = 15;
     private var colors:Array = [0xcccccc, 0xcccccc, 0xcccccc, 0xcccccc];
     private var backpack:HB_UI_BP;
     private var stats:HB_UI_Stats;
 
-    private var miniMap:HB_UI_Map;
-    private const MAP_POSITION:Point = new Point(650, 0);
+
+    private const MAP_POSITION:Point = new Point(650 - 260, 0 - 555);
     private var gs_:GameSprite;
     private var mapChecker:int = 1;
     public var onToggleInventory:Signal = new Signal();
@@ -48,8 +48,8 @@ public class HB_UI_Initializer extends Sprite {
     public function HB_UI_Initializer(updatePotionInventory:UpdatePotionInventorySignal) {
         this.updatePotionInventory = updatePotionInventory;
         var framework1:Bitmap = new EmbeddedAssets_framework.UI_Framework_ICON() as Bitmap;
-        framework1.x = 200;
-        framework1.y = 530;
+        framework1.x = 200 - 260;
+        framework1.y = 530 - 555;
         framework1.scaleX = framework1.scaleY = 2.5;
         addChild(framework1);
         onToggleInventory.add(toggleInventoryVisibility);
@@ -65,15 +65,10 @@ public class HB_UI_Initializer extends Sprite {
 
     public function HB_UI_Initialize(player:Player):void {
         this.trackedPlayer = player;
-        var gs_:GameSprite = player.map_.gs_;
-        miniMap = new HB_UI_Map(gs_);
-        addChild(miniMap);
 
-        // ✅ Instantiate and register minimap BEFORE first UPDATE
-        //miniMap = new HB_UI_Map(gs_);
-        //addChild(miniMap);
 
-        // Now safe to start anything else
+
+
         if (!initializeHB_UI_MPHP) {
             initializeHB_UI_MPHP = new HB_UI_MPHP();
         }
@@ -117,9 +112,7 @@ public class HB_UI_Initializer extends Sprite {
             inventory.visible = false;
         }
 
-        if (miniMap){
-            miniMap.cleanup();
-        }
+
     }
 
     public function onPlayerReady(player:Player):void {
@@ -161,7 +154,7 @@ public class HB_UI_Initializer extends Sprite {
 
     public function addControlButtons():void {
         for (var i:int = 0; i < 4; i++) {
-            var btn:Sprite = createButton(positions[i], 555, buttonSize, buttonSize, colors[i]);
+            var btn:Sprite = createButton(positions[i], 555 - 555, buttonSize, buttonSize, colors[i]);
             btn.name = "toolBtn" + i;
             btn.addEventListener(MouseEvent.CLICK, onClick);
             addChild(btn);

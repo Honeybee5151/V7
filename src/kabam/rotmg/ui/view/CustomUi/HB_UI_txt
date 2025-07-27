@@ -1,0 +1,19 @@
+Welcome to my UI. I hope you like it.
+The HB_UI_Initializer is the container for each file in this folder.
+The Initializer is then initialized in GameSprite.
+
+In Options.as combined with Parameters.as I make the UI toggleable.
+And that is also linked ultimately in Gamesprite.
+
+To scale the UI i created static functions in Screenparameters. Which is executed also in GameSprite.
+You might need to change/add " stage.scaleMode = StageScaleMode.NO_SCALE; in setup in WebMain for hte scaling to work.
+                                   stage.align = StageAlign.TOP_LEFT;"
+
+To make the miniMap work I used the prebuilt one and disconnected it from hudView. Basically I used MiniMap_Mediator.
+So I did it by creating 3 new files, MiniMap_Initializer, the mediator and the signal, and some code added to gamesprite,
+and to gamesprite's mediator, but not 100% sure how much that is needed.
+
+
+
+
+

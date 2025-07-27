@@ -17,7 +17,9 @@ package kabam.rotmg.game.view
    import kabam.rotmg.ui.signals.HUDModelInitialized;
    import kabam.rotmg.ui.signals.HUDSetupStarted;
    import kabam.rotmg.ui.signals.UpdateHUDSignal;
-   import robotlegs.bender.bundles.mvcs.Mediator;
+import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer_Signal;
+
+import robotlegs.bender.bundles.mvcs.Mediator;
    
    public class GameSpriteMediator extends Mediator
    {
@@ -64,6 +66,9 @@ package kabam.rotmg.game.view
       
       [Inject]
       public var hudModelInitialized:HUDModelInitialized;
+
+      [Inject]
+      public var miniMapInitSignal:MiniMap_Initializer_Signal;
       
       public function GameSpriteMediator()
       {
@@ -127,6 +132,7 @@ package kabam.rotmg.game.view
       private function onGameSpriteModelInitialized() : void
       {
          this.hudSetupStarted.dispatch(this.view);
+         this.miniMapInitSignal.dispatch();
       }
       
       private function onStatusPanelDraw(player:Player) : void

@@ -51,6 +51,7 @@ package kabam.rotmg.minimap.view
       {
          if (this.model && this.model.gameSprite && this.model.gameSprite.map) {
             this.view.setMap(this.model.gameSprite.map);
+            trace("[MiniMapMediator] initialize()");
          } else {
             trace("[MiniMapMediator] ERROR: gameSprite or map is null");
             return;

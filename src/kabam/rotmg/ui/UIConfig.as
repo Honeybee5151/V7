@@ -21,6 +21,7 @@ package kabam.rotmg.ui
    import kabam.rotmg.account.core.view.RegisterPromptDialog;
    import kabam.rotmg.account.core.view.RegisterPromptDialogMediator;
 import kabam.rotmg.game.model.PotionInventoryModel;
+import kabam.rotmg.minimap.view.MiniMapMediator;
 import kabam.rotmg.startup.control.StartupSequence;
    import kabam.rotmg.ui.commands.EnterGameCommand;
    import kabam.rotmg.ui.commands.HUDInitCommand;
@@ -51,7 +52,10 @@ import kabam.rotmg.ui.view.AccountScreenMediator;
    import kabam.rotmg.ui.view.ChooseNameRegisterMediator;
    import kabam.rotmg.ui.view.CurrentCharacterMediator;
    import kabam.rotmg.ui.view.CurrentCharacterRectMediator;
-   import kabam.rotmg.ui.view.ErrorDialogMediator;
+import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer;
+import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer_Mediator;
+import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer_Signal;
+import kabam.rotmg.ui.view.ErrorDialogMediator;
 import kabam.rotmg.ui.view.MessageCloseDialog;
 import kabam.rotmg.ui.view.MessageCloseMediator;
 import kabam.rotmg.ui.view.HUDMediator;
@@ -127,6 +131,7 @@ import org.swiftsuspenders.Injector;
          this.mediatorMap.map(PlayerGroupMenu).toMediator(PlayerGroupMenuMediator);
          this.mediatorMap.map(StatMetersView).toMediator(StatMetersMediator);
          this.mediatorMap.map(HUDView).toMediator(HUDMediator);
+         this.mediatorMap.map(MiniMap_Initializer).toMediator(MiniMap_Initializer_Mediator);
          this.mediatorMap.map(PotionSlotView).toMediator(PotionSlotMediator);
          this.commandMap.map(RefreshScreenAfterLoginSignal).toCommand(RefreshScreenAfterLoginCommand);
          this.setupCharacterWindow();
@@ -139,6 +144,7 @@ import org.swiftsuspenders.Injector;
       private function setupCharacterWindow() : void
       {
          this.injector.map(HUDModel).asSingleton();
+         this.injector.map(MiniMap_Initializer_Signal).asSingleton();
          this.injector.map(UpdateHUDSignal).asSingleton();
          this.injector.map(HUDModelInitialized).asSingleton();
          this.commandMap.map(HUDSetupStarted).toCommand(HUDInitCommand);
