@@ -10,7 +10,7 @@ public class ScreenParameters {
 
 
     public static function positionRelations(asset:DisplayObject):Object {
-        return {xPercent: asset.x /  asset.stage.stageWidth , yPercent: asset.y / asset.stage.stageHeight }
+        return {xPercent: asset.x /  800 , yPercent: asset.y / 600 }
 
     }
 

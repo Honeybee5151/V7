@@ -8,7 +8,7 @@ public class MiniMap_Initializer extends Sprite {
 
     public function initialize(map:Map):void {
         this.miniMap = new MiniMap(192, 192);
-        this.miniMap.x = 604;
+        this.miniMap.x = 0;
         this.miniMap.y = 0;
         this.miniMap.setMap(map); // 🔁 this is key to linking it
         addChild(this.miniMap);

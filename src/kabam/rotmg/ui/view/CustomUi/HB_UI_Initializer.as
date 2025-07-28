@@ -44,7 +44,7 @@ public class HB_UI_Initializer extends Sprite {
     public var onToggleInventory:Signal = new Signal();
     public var onToggleStats:Signal = new Signal();
     public var onToggleBackpack:Signal = new Signal();
-    public var onToggleOther:Signal = new Signal();
+    public var onToggleOptions:Signal = new Signal();
 
 
     public function HB_UI_Initializer(updatePotionInventory:UpdatePotionInventorySignal) {
@@ -56,6 +56,7 @@ public class HB_UI_Initializer extends Sprite {
         addChild(framework1);
         onToggleInventory.add(toggleInventoryVisibility);
         onToggleStats.add(togglestatsVisibility);
+        onToggleBackpack.add(toggleBPVisibility);
         if (stage) {
             onAddedToStage(null);
         } else {
@@ -113,7 +114,11 @@ public class HB_UI_Initializer extends Sprite {
         if (inventory && inventory.visible ) {
             inventory.visible = false;
         }
-
+        if (potions) {
+            potions.stopUpdating(); // 👈 Stop the timer
+            if (contains(potions)) removeChild(potions);
+            potions = null;
+        }
 
     }
 
@@ -136,6 +141,7 @@ public class HB_UI_Initializer extends Sprite {
 
         potions = new HB_UI_Potions(updatePotionInventory);
         addChild(potions);
+        potions.startUpdating(player);
 
         stats = new HB_UI_Stats();
         addChild(stats);
@@ -185,19 +191,24 @@ public class HB_UI_Initializer extends Sprite {
                 onToggleInventory.dispatch();
                 break;
             case "toolBtn1":
-                onToggleStats.dispatch();
-                break;
-            case "toolBtn2":
                 onToggleBackpack.dispatch();
                 break;
+            case "toolBtn2":
+                onToggleStats.dispatch();
+                break;
             case "toolBtn3":
-                onToggleOther.dispatch();
+                onToggleOptions.dispatch();
                 break;
         }
     }
 
     private function toggleInventoryVisibility():void {
-        if (externalInventory) externalInventory.visible = !externalInventory.visible;
+        if (externalInventory) {
+            if (externalBackpack && externalBackpack.visible) {
+                externalBackpack.visible = false;
+            }
+            externalInventory.visible = !externalInventory.visible;
+        }
 
         if (stage) {
             stage.focus = null;
@@ -218,6 +229,24 @@ public class HB_UI_Initializer extends Sprite {
         stage.focus = null;
             }
     }
+    private function toggleBPVisibility():void {
+        if (externalBackpack) {
+            if (externalInventory && externalInventory.visible) {
+
+                externalInventory.visible = !externalInventory.visible;
+            }
+            externalBackpack.visible = !externalBackpack.visible;
+        }
+
+        if (stage) {
+            stage.focus = null;
+        }
+    }
+
+
+
+
+
     private function onAddedToStage(e:Event):void {
         removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 

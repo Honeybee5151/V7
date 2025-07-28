@@ -10,6 +10,10 @@ import flash.events.Event;
 import org.osflash.signals.Signal;
 import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
 import kabam.rotmg.game.model.PotionInventoryModel;
+import flash.utils.Timer;
+import flash.events.TimerEvent;
+
+
 
 public class HB_UI_Potions extends Sprite{
     private var mpPots:Vector.<Shape> = new Vector.<Shape>();
@@ -17,7 +21,8 @@ public class HB_UI_Potions extends Sprite{
     private static const MAX_POTS:int = 6;   //  ← add this line
     private var onPotionsChanged:Signal;
     private var updatePotionInventory:UpdatePotionInventorySignal;
-
+    private var trackedPlayer:Player;
+    private var pollTimer:Timer;
     public function HB_UI_Potions(updatePotionInventory:UpdatePotionInventorySignal) {
         super();
         this.updatePotionInventory = updatePotionInventory;
@@ -114,7 +119,28 @@ public class HB_UI_Potions extends Sprite{
             updatePotBars(player);
         }
     }
+    public function startUpdating(player:Player):void {
+        this.trackedPlayer = player;
 
+        pollTimer = new Timer(250);
+        pollTimer.addEventListener(TimerEvent.TIMER, onPoll);
+        pollTimer.start();
+
+        updatePotBars(player); // Force initial update
+    }
+
+    public function stopUpdating():void {
+        if (pollTimer) {
+            pollTimer.stop();
+            pollTimer.removeEventListener(TimerEvent.TIMER, onPoll);
+            pollTimer = null;
+        }
+    }
+    private function onPoll(e:TimerEvent):void {
+        if (trackedPlayer) {
+            updatePotBars(trackedPlayer);
+        }
+    }
 }
 
         }

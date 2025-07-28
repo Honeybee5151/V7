@@ -48,6 +48,8 @@ public class Options extends Sprite
       private var selected_:OptionsTabTitle = null;
       private var options_:Vector.<Sprite>;
       private var optionIndex_:int = 0;
+      private var position_of_map_when_customUI:uint = 608
+      private var position_of_map_when_originalUI:uint = 604
 
       
       public function Options(gs:GameSprite)
@@ -323,6 +325,10 @@ public class Options extends Sprite
             map.removeChild(map.gradientOverlay_)
          }
          this.gs_.HB_UI_Start();
+         if (this.gs_.miniMap != null) {
+            this.gs_.miniMap.x = position_of_map_when_customUI
+         }
+
 
       }
 
@@ -339,6 +345,9 @@ public class Options extends Sprite
 
          }
          this.gs_.HB_UI_Stop();
+         if (this.gs_.miniMap != null) {
+            this.gs_.miniMap.x = position_of_map_when_originalUI
+         }
 
       }
 

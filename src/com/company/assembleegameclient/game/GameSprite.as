@@ -284,12 +284,16 @@ public class GameSprite extends Sprite {
          // OR simply call your UI initializer directly:
          this.miniMapInitializer();  // if you're not going signal-based
 
-         if (Parameters.data_.uitoggle){
-            miniMap.x += position_of_map_when_customUI
+         if (Parameters.data_.uitoggle) {
+            miniMap.x = position_of_map_when_customUI
+
+         }
+         if (!Parameters.data_.uitoggle) {
+            miniMap.x = position_of_map_when_originalUI
+
          }
       }
    }
-
    public function disconnect():void {
       if (this.isGameStarted) {
          this.isGameStarted = false;

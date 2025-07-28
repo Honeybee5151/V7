@@ -10,20 +10,20 @@ public class HB_UI_BP extends InventoryGrid {
     public function HB_UI_BP(player:Player) {
         super(player, player, 8, true)
         this.visible = false;
-        editHB_UI_Inventory()
+        editHB_UI_BP()
 
 
 
     }
 
 
-    public function editHB_UI_Inventory():void {
+    public function editHB_UI_BP():void {
         for (var i:int = 0; i < this.numChildren; i++) {
             var tile:InventoryTile  = this.getChildAt(i) as InventoryTile ;
             if (tile != null) {
                 tile.scaleX = tile.scaleY = 1.0;
                 tile.x = (i % 2) * 40;
-                tile.y = int(i / 2) * 40 + 240;
+                tile.y = int(i / 2) * 40 + 60;
             }
         }
     }
