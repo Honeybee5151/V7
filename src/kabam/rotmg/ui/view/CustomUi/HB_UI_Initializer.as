@@ -36,6 +36,7 @@ public class HB_UI_Initializer extends Sprite {
     private var stats:HB_UI_Stats;
     private var externalInventory:HB_UI_Inventory;
     private var externalBackpack:HB_UI_BP;
+    private var interactivePanel:HB_UI_Interactivepanel;
 
 
     private const MAP_POSITION:Point = new Point(650 - 260, 0 - 555);
@@ -119,7 +120,9 @@ public class HB_UI_Initializer extends Sprite {
             if (contains(potions)) removeChild(potions);
             potions = null;
         }
-
+        if (interactivePanel){
+            interactivePanel.dispose();
+        }
     }
 
     public function onPlayerReady(player:Player):void {
@@ -149,7 +152,8 @@ public class HB_UI_Initializer extends Sprite {
 
         addControlButtons();
 
-
+        interactivePanel = new HB_UI_Interactivepanel(gs_);
+        addChild(interactivePanel);
 
 
 
