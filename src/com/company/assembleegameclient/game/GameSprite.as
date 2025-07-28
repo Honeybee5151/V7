@@ -292,6 +292,20 @@ public class GameSprite extends Sprite {
             miniMap.x = position_of_map_when_originalUI
 
          }
+         if (Initialize_HB_UI_Initializer.scaleX == 1 && stage.stageWidth > 800) {
+            if (!savedPos) {
+               savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
+               trace("savedPos was missing — created manually.");
+            }
+            if (savedPos) {
+               onResize(null); // ✅ Only resize if savedPos exists
+               trace("Resize not skipped");
+            } else {
+               trace("Resize skipped — savedPos not ready");
+            }
+
+
+         }
       }
    }
    public function disconnect():void {
