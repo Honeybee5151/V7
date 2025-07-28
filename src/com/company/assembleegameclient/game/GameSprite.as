@@ -40,6 +40,7 @@ import kabam.rotmg.minimap.view.MiniMapMediator;
 import kabam.rotmg.stage3D.Renderer;
 import kabam.rotmg.ui.UIUtils;
 import kabam.rotmg.ui.model.HUDModel;
+import kabam.rotmg.ui.signals.UpdateBackpackTabSignal;
 import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
 import kabam.rotmg.ui.view.CustomUi.HB_UI_BP;
 import kabam.rotmg.ui.view.CustomUi.HB_UI_Inventory;
@@ -98,7 +99,7 @@ public class GameSprite extends Sprite {
    private var trackedPlayer:Player;
    private var inventory:HB_UI_Inventory;
    private var backpack:HB_UI_BP;
-   private var inventoryWrapper:HB_UI_InventoryBP_Wrapper;
+   public var inventoryWrapper:HB_UI_InventoryBP_Wrapper;
    private var position_of_map_when_customUI:uint = 608
    private var position_of_map_when_originalUI:uint = 604
 

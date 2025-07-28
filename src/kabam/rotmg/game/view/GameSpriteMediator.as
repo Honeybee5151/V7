@@ -16,7 +16,9 @@ package kabam.rotmg.game.view
    import kabam.rotmg.game.signals.SetWorldInteractionSignal;
    import kabam.rotmg.ui.signals.HUDModelInitialized;
    import kabam.rotmg.ui.signals.HUDSetupStarted;
-   import kabam.rotmg.ui.signals.UpdateHUDSignal;
+import kabam.rotmg.ui.signals.UpdateBackpackTabSignal;
+import kabam.rotmg.ui.signals.UpdateHUDSignal;
+import kabam.rotmg.ui.view.CustomUi.HB_UI_BP;
 import kabam.rotmg.ui.view.CustomUi.MiniMap_Initializer_Signal;
 
 import robotlegs.bender.bundles.mvcs.Mediator;
@@ -70,6 +72,8 @@ import robotlegs.bender.bundles.mvcs.Mediator;
       [Inject]
       public var miniMapInitSignal:MiniMap_Initializer_Signal;
 
+      [Inject]
+      public var updateBackpackTabSignal:UpdateBackpackTabSignal;
       
       public function GameSpriteMediator()
       {
@@ -88,6 +92,8 @@ import robotlegs.bender.bundles.mvcs.Mediator;
          this.view.closed.add(this.onClosed);
          this.view.mapModel = this.mapModel;
          this.view.connect();
+         updateBackpackTabSignal.add(onBackpackUnlocked);
+
       }
 
       override public function destroy() : void
@@ -100,6 +106,7 @@ import robotlegs.bender.bundles.mvcs.Mediator;
          this.disconnect.remove(this.onDisconnect);
          this.view.closed.remove(this.onClosed);
          this.view.disconnect();
+         updateBackpackTabSignal.remove(onBackpackUnlocked);
       }
       
       private function onDisconnect() : void
@@ -151,5 +158,25 @@ import robotlegs.bender.bundles.mvcs.Mediator;
       {
          this.view.hudModelInitialized();
       }
+
+      private function onBackpackUnlocked(hasBackpack:Boolean):void {
+         trace("Backpack unlocked via signal →", hasBackpack);
+
+         if (hasBackpack && view && view.inventoryWrapper) {
+            // You may need to manually add the backpack if not already added
+            var bp:HB_UI_BP = view.inventoryWrapper.getBackpack();
+            if (bp && !view.inventoryWrapper.contains(bp)) {
+               view.inventoryWrapper.addChild(bp);
+            }
+
+            view.Initialize_HB_UI_Initializer.setExternalUIRefs(
+                    view.inventoryWrapper.getInventory(),
+                    bp
+            );
+         }
+      }
+
+
+
    }
 }

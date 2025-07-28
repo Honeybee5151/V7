@@ -8,7 +8,7 @@ public class HB_UI_BP extends InventoryGrid {
 
 
     public function HB_UI_BP(player:Player) {
-        super(player, player, 8, true)
+        super(player, player, 12, true)
         this.visible = false;
         editHB_UI_BP()
 
