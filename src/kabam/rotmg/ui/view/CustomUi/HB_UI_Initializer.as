@@ -7,6 +7,11 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 
+import kabam.rotmg.assets.EmbeddedAssets;
+import kabam.rotmg.assets.HB_UI_Assets.EmbeddedAssets_BP;
+import kabam.rotmg.assets.HB_UI_Assets.EmbeddedAssets_INVENTORY;
+import kabam.rotmg.assets.HB_UI_Assets.EmbeddedAssets_OPTIONS2;
+import kabam.rotmg.assets.HB_UI_Assets.EmbeddedAssets_STATS;
 
 
 import kabam.rotmg.ui.signals.UpdatePotionInventorySignal;
@@ -46,11 +51,16 @@ public class HB_UI_Initializer extends Sprite {
     public var onToggleStats:Signal = new Signal();
     public var onToggleBackpack:Signal = new Signal();
     public var onToggleOptions:Signal = new Signal();
+    private var framework1:Bitmap = new EmbeddedAssets_framework.UI_Framework_ICON() as Bitmap;
+    private var INVENTORYPNG:Bitmap = new EmbeddedAssets_INVENTORY.HB_UI_INVENTORY_ICON() as Bitmap;
+    private var BACKPACKPNG:Bitmap = new EmbeddedAssets_BP.HB_UI_BP_ICON() as Bitmap;
+    private var STATSPNG:Bitmap = new EmbeddedAssets_STATS.HB_UI_STATS_ICON() as Bitmap;
+    private var OPTIONSPNG:Bitmap = new EmbeddedAssets_OPTIONS2.HB_UI_OPTIONS2_ICON() as Bitmap;
+
 
 
     public function HB_UI_Initializer(updatePotionInventory:UpdatePotionInventorySignal) {
         this.updatePotionInventory = updatePotionInventory;
-        var framework1:Bitmap = new EmbeddedAssets_framework.UI_Framework_ICON() as Bitmap;
         framework1.x = 200 - 260;
         framework1.y = 530 - 555;
         framework1.scaleX = framework1.scaleY = 2.5;
@@ -123,6 +133,12 @@ public class HB_UI_Initializer extends Sprite {
         if (interactivePanel){
             interactivePanel.dispose();
         }
+      if(framework1){
+          removeChild(framework1)
+      }
+     if (INVENTORYPNG){
+         removeChild(INVENTORYPNG)
+     }
     }
 
     public function onPlayerReady(player:Player):void {
@@ -151,6 +167,28 @@ public class HB_UI_Initializer extends Sprite {
         stats.startStatsTimer(trackedPlayer);
 
         addControlButtons();
+        INVENTORYPNG.x = 372.5 - 260;
+        INVENTORYPNG.y = 556.5 - 555;
+        INVENTORYPNG.scaleX = INVENTORYPNG.scaleY = 1.5;
+        addChild(INVENTORYPNG);
+
+        BACKPACKPNG.x = 386.25 - 260;
+        BACKPACKPNG.y = 556.5 - 555;
+        BACKPACKPNG.scaleX = BACKPACKPNG.scaleY = 1.5;
+        addChild(BACKPACKPNG);
+
+        STATSPNG.x = 401.25 - 260;
+        STATSPNG.y = 556.5 - 555;
+        STATSPNG.scaleX = STATSPNG.scaleY = 1.5;
+        addChild(STATSPNG);
+
+        OPTIONSPNG.x = 416.25 - 260;
+        OPTIONSPNG.y = 556.5 - 555;
+        OPTIONSPNG.scaleX = OPTIONSPNG.scaleY = 1.5;
+        addChild(OPTIONSPNG);
+
+
+
 
         interactivePanel = new HB_UI_Interactivepanel(gs_);
         addChild(interactivePanel);
