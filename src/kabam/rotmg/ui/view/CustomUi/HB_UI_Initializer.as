@@ -1,10 +1,12 @@
 package kabam.rotmg.ui.view.CustomUi {
 import com.company.assembleegameclient.game.GameSprite;
+import com.company.assembleegameclient.ui.options.Options;
 
 import flash.display.Shape;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.filters.DropShadowFilter;
 import flash.geom.Point;
 
 import kabam.rotmg.assets.EmbeddedAssets;
@@ -56,6 +58,7 @@ public class HB_UI_Initializer extends Sprite {
     private var BACKPACKPNG:Bitmap = new EmbeddedAssets_BP.HB_UI_BP_ICON() as Bitmap;
     private var STATSPNG:Bitmap = new EmbeddedAssets_STATS.HB_UI_STATS_ICON() as Bitmap;
     private var OPTIONSPNG:Bitmap = new EmbeddedAssets_OPTIONS2.HB_UI_OPTIONS2_ICON() as Bitmap;
+    private var optionsPanel:Options;
 
 
 
@@ -64,15 +67,19 @@ public class HB_UI_Initializer extends Sprite {
         framework1.x = 200 - 260;
         framework1.y = 530 - 555;
         framework1.scaleX = framework1.scaleY = 2.5;
+        framework1.filters = [new DropShadowFilter(0, 0, 0, 1, 16, 16, 1)];
         addChild(framework1);
         onToggleInventory.add(toggleInventoryVisibility);
         onToggleStats.add(togglestatsVisibility);
         onToggleBackpack.add(toggleBPVisibility);
+        onToggleOptions.add(toggleOPTIONSVisibility);
         if (stage) {
             onAddedToStage(null);
         } else {
             addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
         }
+
+
     }
 
 
@@ -164,7 +171,9 @@ public class HB_UI_Initializer extends Sprite {
 
         stats = new HB_UI_Stats();
         addChild(stats);
-        stats.startStatsTimer(trackedPlayer);
+        stats.startStatsTimer(trackedPlayer)
+
+
 
         addControlButtons();
         INVENTORYPNG.x = 372.5 - 260;
@@ -285,7 +294,19 @@ public class HB_UI_Initializer extends Sprite {
         }
     }
 
+    private function toggleOPTIONSVisibility():void {
+        if (optionsPanel && this.gs_.contains(optionsPanel)) {
+            this.gs_.removeChild(optionsPanel);
+            optionsPanel = null;
+        } else {
+            optionsPanel = new Options(this.gs_);
+            this.gs_.addChild(optionsPanel);
+        }
 
+        if (stage) {
+            stage.focus = null;
+        }
+    }
 
 
 
