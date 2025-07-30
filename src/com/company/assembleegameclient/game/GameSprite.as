@@ -308,7 +308,7 @@ public class GameSprite extends Sprite {
             if (!savedPos) {
                savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
                trace("savedPos was missing — created manually.");
-               hasInitializedUI = true;
+
             }
             if (savedPos) {
                onResize(null); // ✅ Only resize if savedPos exists
