@@ -64,11 +64,7 @@ public class HB_UI_Initializer extends Sprite {
 
     public function HB_UI_Initializer(updatePotionInventory:UpdatePotionInventorySignal) {
         this.updatePotionInventory = updatePotionInventory;
-        framework1.x = 200 - 260;
-        framework1.y = 530 - 555;
-        framework1.scaleX = framework1.scaleY = 2.5;
-        framework1.filters = [new DropShadowFilter(0, 0, 0, 1, 16, 16, 1)];
-        addChild(framework1);
+
         onToggleInventory.add(toggleInventoryVisibility);
         onToggleStats.add(togglestatsVisibility);
         onToggleBackpack.add(toggleBPVisibility);
@@ -129,7 +125,7 @@ public class HB_UI_Initializer extends Sprite {
 
 
         }
-        if (inventory && inventory.visible ) {
+        if (inventory && inventory.visible) {
             inventory.visible = false;
         }
         if (potions) {
@@ -137,22 +133,37 @@ public class HB_UI_Initializer extends Sprite {
             if (contains(potions)) removeChild(potions);
             potions = null;
         }
-        if (interactivePanel){
+        if (interactivePanel) {
             interactivePanel.dispose();
         }
-      if(framework1){
-          removeChild(framework1)
-      }
-     if (INVENTORYPNG){
-         removeChild(INVENTORYPNG)
-     }
+        if (framework1 && this.contains(framework1)) {
+            this.removeChild(framework1);
+        }
+        if (INVENTORYPNG && this.contains(INVENTORYPNG)) {
+            this.removeChild(INVENTORYPNG);
+        }
+
+        if (STATSPNG && this.contains(STATSPNG)) {
+            this.removeChild(STATSPNG);
+        }
+        if (OPTIONSPNG && this.contains(OPTIONSPNG)) {
+            this.removeChild(OPTIONSPNG);
+        }
+        if (BACKPACKPNG && this.contains(BACKPACKPNG)) {
+            this.removeChild(BACKPACKPNG);
+
+        }
     }
 
     public function onPlayerReady(player:Player):void {
         if (player && player.map_ && player.map_.gs_) {
             this.gs_ = player.map_.gs_;
         }
-
+        framework1.x = 200 - 260;
+        framework1.y = 530 - 555;
+        framework1.scaleX = framework1.scaleY = 2.5;
+        framework1.filters = [new DropShadowFilter(0, 0, 0, 1, 16, 16, 1)];
+        addChild(framework1);
                 this.trackedPlayer = player;
 
         equipmentBG = new HB_UI_Equipment_BG();

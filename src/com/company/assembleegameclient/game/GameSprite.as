@@ -102,6 +102,9 @@ public class GameSprite extends Sprite {
    public var inventoryWrapper:HB_UI_InventoryBP_Wrapper;
    private var position_of_map_when_customUI:uint = 608
    private var position_of_map_when_originalUI:uint = 604
+   private var lastStageWidth:int = -1;
+   private var lastStageHeight:int = -1;
+
 
    public function GameSprite(gameId:int, createCharacter:Boolean, charId:int, model:PlayerModel, mapJSON:String) {
 
@@ -118,6 +121,8 @@ public class GameSprite extends Sprite {
       this.Initialize_HB_UI_Initializer = new HB_UI_Initializer(this.potionSignal);
       Initialize_HB_UI_Initializer.x += 260;
       Initialize_HB_UI_Initializer.y += 555;
+
+
 
    }
 
@@ -159,13 +164,17 @@ public class GameSprite extends Sprite {
       addChild(Initialize_HB_UI_Initializer);
       this.trackedPlayer = this.map.player_;
 
-
-      // Do an immediate scale/position pass (so no first‑resize glitch)
-      ScreenParameters.execute(Initialize_HB_UI_Initializer, savedPos);
-
       waitForPlayerReady();
-      savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer); // now includes scale
+      if (savedPos) { ScreenParameters.execute(Initialize_HB_UI_Initializer, savedPos); }
 
+
+
+
+
+      trace("HB_UI_Initializer added:", this.contains(Initialize_HB_UI_Initializer)); // Should be true
+      trace("HB_UI_Initializer pos:", Initialize_HB_UI_Initializer.x, Initialize_HB_UI_Initializer.y);
+      trace("HB_UI_Initializer scale:", Initialize_HB_UI_Initializer.scaleX, Initialize_HB_UI_Initializer.scaleY);
+      trace("savedPos ?", JSON.stringify(savedPos));
 
    }
 
@@ -177,6 +186,8 @@ public class GameSprite extends Sprite {
          removeChild(inventoryWrapper);
          inventoryWrapper = null;
       }
+      hasInitializedUI = false;
+
       }
 
 
@@ -297,6 +308,7 @@ public class GameSprite extends Sprite {
             if (!savedPos) {
                savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
                trace("savedPos was missing — created manually.");
+               hasInitializedUI = true;
             }
             if (savedPos) {
                onResize(null); // ✅ Only resize if savedPos exists
@@ -307,6 +319,7 @@ public class GameSprite extends Sprite {
 
 
          }
+
       }
    }
    public function disconnect():void {
@@ -379,9 +392,15 @@ public class GameSprite extends Sprite {
       var player:Player = map.player_;
       if (player && player.equipment_ && player.equipment_.length > 3) {
          removeEventListener(Event.ENTER_FRAME, onCheckPlayerReady);
+
+         // 🔧 ONLY create savedPos if it doesn't exist
+         if (!savedPos) {
+            savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
+         }
+
          Initialize_HB_UI_Initializer.onPlayerReady(player);
          Initialize_HB_UI_Initializer.HB_UI_Initialize(player);
-         savedPos = ScreenParameters.positionRelations(Initialize_HB_UI_Initializer);
+
          inventoryWrapper = new HB_UI_InventoryBP_Wrapper();
          inventoryWrapper.Initialize(this.map.player_);
          addChild(inventoryWrapper);
@@ -390,6 +409,8 @@ public class GameSprite extends Sprite {
                  inventoryWrapper.getInventory(),
                  inventoryWrapper.getBackpack()
          );
+
+         hasInitializedUI = true; // Also add this
       }
    }
    private function onResize(e:Event):void {
