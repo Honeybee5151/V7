@@ -31,6 +31,10 @@ public class ProximityChat_MicInput extends EventDispatcher {
     private var activityLevel:Number = 0;
     private var isActive:Boolean = false;
 
+    // DEBUG: Add counters
+    private var sampleDataCount:int = 0;
+    private var activityCount:int = 0;
+
     // Events
     public static const MIC_INITIALIZED:String = "micInitialized";
     public static const MIC_ERROR:String = "micError";
@@ -39,6 +43,7 @@ public class ProximityChat_MicInput extends EventDispatcher {
 
     public function ProximityChat_MicInput() {
         super();
+        trace("DEBUG: ProximityChat_MicInput constructor called");
         audioBuffer = new ByteArray();
         audioBuffer.endian = Endian.LITTLE_ENDIAN;
         initializeMicrophone();
@@ -48,19 +53,22 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Initialize the default system microphone
      */
     private function initializeMicrophone():void {
+        trace("DEBUG: initializeMicrophone() called");
         try {
             // Get the default microphone (uses Windows default)
             microphone = Microphone.getMicrophone();
+            trace("DEBUG: Microphone.getMicrophone() returned: " + microphone);
 
             if (microphone != null) {
+                trace("DEBUG: Microphone found, calling setupMicrophone()");
                 setupMicrophone();
             } else {
+                trace("DEBUG: No microphone found!");
                 dispatchEvent(new Event(MIC_ERROR));
-                trace("ProximityChat_MicInput: No microphone found");
             }
         } catch (error:Error) {
+            trace("DEBUG: Error in initializeMicrophone - " + error.message);
             dispatchEvent(new Event(MIC_ERROR));
-            trace("ProximityChat_MicInput: Error initializing microphone - " + error.message);
         }
     }
 
@@ -68,43 +76,58 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Configure microphone settings
      */
     private function setupMicrophone():void {
+        trace("DEBUG: setupMicrophone() called");
+
         // Set microphone properties
         microphone.rate = sampleRate / 1000; // Convert to kHz (44.1 kHz = 44)
         microphone.gain = gain;
         microphone.setSilenceLevel(silenceLevel, silenceTimeout);
 
+        trace("DEBUG: Microphone settings - Rate: " + microphone.rate + ", Gain: " + microphone.gain);
+        trace("DEBUG: Microphone name: " + microphone.name);
+        trace("DEBUG: Microphone muted: " + microphone.muted);
+
         // Enable enhanced microphone (reduces echo and noise)
         if (microphone.hasOwnProperty("enhancedMicrophone")) {
             microphone["enhancedMicrophone"] = true;
+            trace("DEBUG: Enhanced microphone enabled");
         }
 
         // Add event listeners
         microphone.addEventListener(ActivityEvent.ACTIVITY, onMicrophoneActivity);
         microphone.addEventListener(StatusEvent.STATUS, onMicrophoneStatus);
+        trace("DEBUG: Event listeners added");
 
         isInitialized = true;
+        trace("DEBUG: Microphone initialized successfully, dispatching MIC_INITIALIZED");
         dispatchEvent(new Event(MIC_INITIALIZED));
-        trace("ProximityChat_MicInput: Microphone initialized - " + microphone.name);
     }
 
     /**
      * Start recording from microphone
      */
     public function startRecording():void {
-        if (!isInitialized || isRecording) return;
+        trace("DEBUG: startRecording() called - isInitialized: " + isInitialized + ", isRecording: " + isRecording);
+
+        if (!isInitialized || isRecording) {
+            trace("DEBUG: Cannot start recording - not initialized or already recording");
+            return;
+        }
 
         try {
             // Clear the audio buffer
             audioBuffer.clear();
+            trace("DEBUG: Audio buffer cleared");
 
             // Set up microphone for recording
             microphone.addEventListener(SampleDataEvent.SAMPLE_DATA, onSampleData);
+            trace("DEBUG: SampleDataEvent listener added");
 
             isRecording = true;
-            trace("ProximityChat_MicInput: Recording started");
+            trace("DEBUG: Recording started successfully");
 
         } catch (error:Error) {
-            trace("ProximityChat_MicInput: Error starting recording - " + error.message);
+            trace("DEBUG: Error starting recording - " + error.message);
             dispatchEvent(new Event(MIC_ERROR));
         }
     }
@@ -113,15 +136,16 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Stop recording from microphone
      */
     public function stopRecording():void {
+        trace("DEBUG: stopRecording() called");
         if (!isRecording) return;
 
         try {
             microphone.removeEventListener(SampleDataEvent.SAMPLE_DATA, onSampleData);
             isRecording = false;
-            trace("ProximityChat_MicInput: Recording stopped");
+            trace("DEBUG: Recording stopped");
 
         } catch (error:Error) {
-            trace("ProximityChat_MicInput: Error stopping recording - " + error.message);
+            trace("DEBUG: Error stopping recording - " + error.message);
         }
     }
 
@@ -129,50 +153,46 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Handle microphone sample data
      */
     private function onSampleData(event:SampleDataEvent):void {
-        // Read available audio data
-        var samples:ByteArray = event.data;
+        var freshSamples:ByteArray = new ByteArray();
+        freshSamples.endian = Endian.LITTLE_ENDIAN;
+        event.data.readBytes(freshSamples);
 
-        if (samples.bytesAvailable > 0) {
-            // Copy data to our buffer
-            samples.readBytes(audioBuffer, audioBuffer.length, samples.bytesAvailable);
-
-            // Dispatch event with audio data
-            var audioEvent:ProximityChat_AudioDataEvent = new ProximityChat_AudioDataEvent(
-                    AUDIO_DATA_AVAILABLE,
-                    audioBuffer
-            );
-            dispatchEvent(audioEvent);
-        }
+        var audioEvent:ProximityChat_AudioDataEvent = new ProximityChat_AudioDataEvent(
+                AUDIO_DATA_AVAILABLE,
+                freshSamples
+        );
+        dispatchEvent(audioEvent);
     }
 
     /**
      * Handle microphone activity changes
      */
     private function onMicrophoneActivity(event:ActivityEvent):void {
+        activityCount++;
         isActive = event.activating;
         activityLevel = microphone.activityLevel;
+
+        trace("DEBUG: Activity #" + activityCount + " - Active: " + isActive + ", Level: " + activityLevel);
 
         var activityEvent:ProximityChat_ActivityEvent = new ProximityChat_ActivityEvent(
                 ACTIVITY_CHANGED,
                 isActive,
                 activityLevel
         );
+        trace("DEBUG: Dispatching ACTIVITY_CHANGED event");
         dispatchEvent(activityEvent);
-
-        trace("ProximityChat_MicInput: Activity - " + (isActive ? "Active" : "Inactive") +
-                " Level: " + activityLevel);
     }
 
     /**
      * Handle microphone status changes (permissions, etc.)
      */
     private function onMicrophoneStatus(event:StatusEvent):void {
-        trace("ProximityChat_MicInput: Status - " + event.code + ": " + event.level);
+        trace("DEBUG: Status event - Code: " + event.code + ", Level: " + event.level);
 
         if (event.code == "Microphone.Unmuted") {
-            trace("ProximityChat_MicInput: Microphone access granted");
+            trace("DEBUG: Microphone access granted");
         } else if (event.code == "Microphone.Muted") {
-            trace("ProximityChat_MicInput: Microphone access denied");
+            trace("DEBUG: Microphone access denied");
             dispatchEvent(new Event(MIC_ERROR));
         }
     }
@@ -181,6 +201,8 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Get current audio data from buffer
      */
     public function getAudioData():ByteArray {
+        trace("DEBUG: getAudioData() called - buffer length: " + audioBuffer.length);
+
         var data:ByteArray = new ByteArray();
         data.endian = Endian.LITTLE_ENDIAN;
 
@@ -188,6 +210,9 @@ public class ProximityChat_MicInput extends EventDispatcher {
             audioBuffer.position = 0;
             audioBuffer.readBytes(data, 0, audioBuffer.length);
             audioBuffer.clear(); // Clear buffer after reading
+            trace("DEBUG: Returned " + data.length + " bytes of audio data");
+        } else {
+            trace("DEBUG: No audio data in buffer");
         }
 
         return data;
@@ -197,13 +222,16 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Get current microphone activity level (0-100)
      */
     public function getActivityLevel():Number {
-        return microphone ? microphone.activityLevel : 0;
+        var level:Number = microphone ? microphone.activityLevel : 0;
+        trace("DEBUG: getActivityLevel() returning: " + level);
+        return level;
     }
 
     /**
      * Check if microphone is currently active
      */
     public function get microphoneActive():Boolean {
+        trace("DEBUG: microphoneActive getter returning: " + isActive);
         return isActive;
     }
 
@@ -211,6 +239,7 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Check if recording is in progress
      */
     public function get recording():Boolean {
+        trace("DEBUG: recording getter returning: " + isRecording);
         return isRecording;
     }
 
@@ -218,16 +247,20 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Get microphone name
      */
     public function get microphoneName():String {
-        return microphone ? microphone.name : "No microphone";
+        var name:String = microphone ? microphone.name : "No microphone";
+        trace("DEBUG: microphoneName getter returning: " + name);
+        return name;
     }
 
     /**
      * Set microphone gain (0-100)
      */
     public function setGain(value:Number):void {
+        trace("DEBUG: setGain(" + value + ") called");
         gain = Math.max(0, Math.min(100, value));
         if (microphone) {
             microphone.gain = gain;
+            trace("DEBUG: Microphone gain set to: " + microphone.gain);
         }
     }
 
@@ -235,6 +268,7 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Get current microphone gain
      */
     public function getGain():Number {
+        trace("DEBUG: getGain() returning: " + gain);
         return gain;
     }
 
@@ -242,11 +276,13 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Set silence detection level (0-100)
      */
     public function setSilenceLevel(level:Number, timeout:int = -1):void {
+        trace("DEBUG: setSilenceLevel(" + level + ", " + timeout + ") called");
         silenceLevel = Math.max(0, Math.min(100, level));
         silenceTimeout = timeout;
 
         if (microphone) {
             microphone.setSilenceLevel(silenceLevel, silenceTimeout);
+            trace("DEBUG: Microphone silence level set");
         }
     }
 
@@ -254,21 +290,34 @@ public class ProximityChat_MicInput extends EventDispatcher {
      * Clean up and release microphone
      */
     public function dispose():void {
+        trace("DEBUG: dispose() called");
         stopRecording();
 
         if (microphone) {
             microphone.removeEventListener(ActivityEvent.ACTIVITY, onMicrophoneActivity);
             microphone.removeEventListener(StatusEvent.STATUS, onMicrophoneStatus);
             microphone = null;
+            trace("DEBUG: Microphone disposed");
         }
 
         if (audioBuffer) {
             audioBuffer.clear();
             audioBuffer = null;
+            trace("DEBUG: Audio buffer disposed");
         }
 
         isInitialized = false;
-        trace("ProximityChat_MicInput: Disposed");
+        trace("DEBUG: ProximityChat_MicInput disposed");
+    }
+
+    // DEBUG: Add method to check current state
+    public function getDebugInfo():String {
+        return "Initialized: " + isInitialized +
+                ", Recording: " + isRecording +
+                ", Active: " + isActive +
+                ", Level: " + activityLevel +
+                ", SampleData events: " + sampleDataCount +
+                ", Activity events: " + activityCount;
     }
 }
 }
