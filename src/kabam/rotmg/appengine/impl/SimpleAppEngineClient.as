@@ -23,7 +23,7 @@ import flash.net.URLLoaderDataFormat;
       public function SimpleAppEngineClient()
       {
          super();
-         this.isEncrypted = true;
+         this.isEncrypted = false;
          this.maxRetries = 0;
          this.dataFormat = URLLoaderDataFormat.TEXT;
       }

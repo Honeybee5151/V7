@@ -59,10 +59,7 @@ import kabam.rotmg.ui.view.CustomUi.HB_UI_Initializer;
 
 import org.swiftsuspenders.Injector;
 
-
-import robotlegs.bender.framework.api.IContext;
-import robotlegs.bender.extensions.mediatorMap.api.IMediatorMap
-
+import kabam.rotmg.ProximityChat.ProximityChat_UI_Initializer;
 
 public class GameSprite extends Sprite {
    public const closed:Signal = new Signal();
@@ -104,7 +101,7 @@ public class GameSprite extends Sprite {
    private var position_of_map_when_originalUI:uint = 604
    private var lastStageWidth:int = -1;
    private var lastStageHeight:int = -1;
-
+   private var proximityChatUI:ProximityChat_UI_Initializer;
 
    public function GameSprite(gameId:int, createCharacter:Boolean, charId:int, model:PlayerModel, mapJSON:String) {
 
@@ -121,7 +118,8 @@ public class GameSprite extends Sprite {
       this.Initialize_HB_UI_Initializer = new HB_UI_Initializer(this.potionSignal);
       Initialize_HB_UI_Initializer.x += 260;
       Initialize_HB_UI_Initializer.y += 555;
-
+      proximityChatUI = new ProximityChat_UI_Initializer();
+      addChild(proximityChatUI);
 
 
    }
@@ -417,6 +415,7 @@ public class GameSprite extends Sprite {
       if (contains(Initialize_HB_UI_Initializer) && savedPos){
          ScreenParameters.execute(Initialize_HB_UI_Initializer, savedPos);
          trace("savedPos →", JSON.stringify(savedPos));
+         ScreenParameters.execute(miniMap, savedPos);
       }
       else{
          trace("gamesprite's onresize's savedd pos it not avialable");
