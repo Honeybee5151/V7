@@ -3,14 +3,19 @@ import flash.display.Sprite;
 import flash.display.SimpleButton;
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.StatusEvent;
+import flash.media.Microphone;
 import flash.text.TextField;
-import flash.utils.setTimeout;
+import flash.text.TextFieldAutoSize;
+import flash.utils.Timer;
+import flash.events.TimerEvent;
 
 public class ProximityChat_UI_Initializer extends Sprite {
-    private var micInput:ProximityChat_MicInput;
-    private var visualiser:ProximityChat_UI_SoundVisualiser;
+    private var mic:Microphone;
     private var micIndex:int = 0;
+    private var micList:Array;
     private var micLabel:TextField;
+    private var activityTimer:Timer;
 
     public function ProximityChat_UI_Initializer() {
         if (stage) {
@@ -26,72 +31,83 @@ public class ProximityChat_UI_Initializer extends Sprite {
     }
 
     private function init():void {
-        micInput = new ProximityChat_MicInput();
-        micInput.addEventListener("MicInitialized", onMicReady);
+        trace("🎤 Initializing mic selector...");
 
-        // Optional: background box to ensure visibility
-        graphics.beginFill(0x111111, 0.7);
-        graphics.drawRect(0, 0, 220, 80);
-        graphics.endFill();
-    }
+        micList = Microphone.names;
+        if (micList.length == 0) {
+            trace("❌ No microphones available.");
+            return;
+        }
 
-    private function onMicReady(e:Event):void {
-        if (visualiser && contains(visualiser)) removeChild(visualiser);
+        trace("🔊 Found input devices:");
+        for (var i:int = 0; i < micList.length; i++) {
+            trace("[" + i + "]: " + micList[i]);
+        }
 
-        visualiser = new ProximityChat_UI_SoundVisualiser(micInput.getMic());
-        visualiser.y = 60;
-        addChild(visualiser);
-
-        updateMicLabel();
-        showSwitchMicButton();
-    }
-
-    private function updateMicLabel():void {
-        if (micLabel && contains(micLabel)) removeChild(micLabel);
-
+        // Mic name label
         micLabel = new TextField();
-        micLabel.name = "micLabel";
-        micLabel.text = "Mic: " + micInput.getMic().name;
         micLabel.textColor = 0xFFFFFF;
+        micLabel.autoSize = TextFieldAutoSize.LEFT;
         micLabel.x = 10;
         micLabel.y = 10;
-        micLabel.width = 200;
-        micLabel.height = 20;
-        micLabel.selectable = false;
         addChild(micLabel);
-    }
 
-    private function showSwitchMicButton():void {
-        var btn:SimpleButton = new SimpleButton();
-        btn.upState = makeButtonState("Switch Mic");
-        btn.overState = makeButtonState("Switch Mic");
-        btn.downState = makeButtonState("Switching...");
-        btn.hitTestState = btn.upState;
+        // Switch mic button
+        var btn:SimpleButton = createButton("Next Mic");
         btn.x = 10;
-        btn.y = 30;
+        btn.y = 40;
+        btn.addEventListener(MouseEvent.CLICK, onNextMic);
         addChild(btn);
 
-        btn.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
-            micIndex++;
-            var mics:Array = micInput.getAvailableMicNames();
-            if (micIndex >= mics.length) micIndex = 0;
-            micInput.switchToMic(micIndex);
-        });
-
-        micInput.addEventListener("MicInitialized", function(e:Event):void {
-            updateMicLabel();
-            if (visualiser && contains(visualiser)) removeChild(visualiser);
-            visualiser = new ProximityChat_UI_SoundVisualiser(micInput.getMic());
-            visualiser.y = 60;
-            addChild(visualiser);
-        });
+        selectMic(micIndex);
     }
 
-    private function makeButtonState(label:String):Sprite {
-        var state:Sprite = new Sprite();
-        state.graphics.beginFill(0x333333);
-        state.graphics.drawRect(0, 0, 100, 20);
-        state.graphics.endFill();
+    private function onNextMic(e:MouseEvent):void {
+        micIndex = (micIndex + 1) % micList.length;
+        selectMic(micIndex);
+    }
+
+    private function selectMic(index:int):void {
+        trace("🔁 Switching to mic index: " + index + " → " + micList[index]);
+        mic = Microphone.getMicrophone(index);
+
+        if (!mic) {
+            trace("❌ Microphone at index " + index + " not available.");
+            return;
+        }
+
+        mic.setLoopBack(false);
+        mic.setUseEchoSuppression(true);
+        mic.gain = 80;
+        mic.rate = 11;
+        mic.setSilenceLevel(5, 1000);
+        mic.addEventListener(StatusEvent.STATUS, onMicStatus);
+
+        micLabel.text = "🎤 Using: " + mic.name;
+
+        // Start or reset polling
+        if (activityTimer) activityTimer.stop();
+
+        activityTimer = new Timer(500);
+        activityTimer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent):void {
+            trace("📈 Mic activity: " + mic.activityLevel);
+        });
+        activityTimer.start();
+    }
+
+    private function onMicStatus(e:StatusEvent):void {
+        if (e.code === "Microphone.Unmuted") {
+            trace("✅ Mic access granted.");
+        } else if (e.code === "Microphone.Muted") {
+            trace("❌ Mic access denied.");
+        }
+    }
+
+    private function createButton(label:String):SimpleButton {
+        var up:Sprite = new Sprite();
+        up.graphics.beginFill(0x333333);
+        up.graphics.drawRect(0, 0, 100, 20);
+        up.graphics.endFill();
 
         var tf:TextField = new TextField();
         tf.text = label;
@@ -99,9 +115,10 @@ public class ProximityChat_UI_Initializer extends Sprite {
         tf.width = 100;
         tf.height = 20;
         tf.selectable = false;
-        state.addChild(tf);
+        up.addChild(tf);
 
-        return state;
+        // Same for over/down state (simplified)
+        return new SimpleButton(up, up, up, up);
     }
 }
 }
