@@ -59,7 +59,7 @@ import kabam.rotmg.ui.view.CustomUi.HB_UI_Initializer;
 
 import org.swiftsuspenders.Injector;
 
-import kabam.rotmg.ProximityChat.ProximityChat_UI_Initializer;
+
 
 public class GameSprite extends Sprite {
    public const closed:Signal = new Signal();
@@ -101,7 +101,8 @@ public class GameSprite extends Sprite {
    private var position_of_map_when_originalUI:uint = 604
    private var lastStageWidth:int = -1;
    private var lastStageHeight:int = -1;
-   private var proximityChatUI:ProximityChat_UI_Initializer;
+
+
 
    public function GameSprite(gameId:int, createCharacter:Boolean, charId:int, model:PlayerModel, mapJSON:String) {
 
@@ -118,8 +119,7 @@ public class GameSprite extends Sprite {
       this.Initialize_HB_UI_Initializer = new HB_UI_Initializer(this.potionSignal);
       Initialize_HB_UI_Initializer.x += 260;
       Initialize_HB_UI_Initializer.y += 555;
-      proximityChatUI = new ProximityChat_UI_Initializer();
-      addChild(proximityChatUI);
+
 
 
    }
@@ -335,12 +335,11 @@ public class GameSprite extends Sprite {
          if (Parameters.data_.uitoggle) {
             HB_UI_Stop();
          }
-        // miniMap.cleanup();
-         //removeChild(miniMap);
+
+         // ✅ Cleanup proximity chat
+
          stage.removeEventListener(Event.RESIZE, onResize);
       }
-
-
    }
 
    private function onEnterFrame(event:Event):void {
@@ -366,18 +365,18 @@ public class GameSprite extends Sprite {
       }
       this.lastUpdate_ = time;
 
-
       if (player != null && !hasDispatchedPlayerReady) {
          hasDispatchedPlayerReady = true;
          playerReady.dispatch(player);
+
+         // ✅ ADD PROXIMITY CHAT HERE - when player first becomes available
+
       }
+
       if (Parameters.data_.uitoggle && !checkerForPlayer) {
          HB_UI_Start();
          checkerForPlayer = true;
-
       }
-
-
    }
 
    private function waitForPlayerReady():void {

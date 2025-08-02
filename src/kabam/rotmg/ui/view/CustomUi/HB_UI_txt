@@ -9,7 +9,7 @@ And that is also linked ultimately in GameSprite.
 To scale the UI i created static functions in Screenparameters. Which is executed also in GameSprite.
 You might need to change/add "stage.scaleMode = StageScaleMode.NO_SCALE;  stage.align = StageAlign.TOP_LEFT;"
 in WebMain -> setup, for the scaling to work. Also here is a tutorial on how to do proper mscale for the rest of the game
-https://www.mpgh.net/forum/showthread.php?t=1542152.
+https://www.mpgh.net/forum/showthread.php?t=1542152. Actually this tutorial is garbo.
 
 
 To make the miniMap work I used the prebuilt one and disconnected it from hudView. Basically I used MiniMap_Mediator.
